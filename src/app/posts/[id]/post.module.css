@@ -83,7 +83,7 @@
 }
 
 .content {
-    padding: 2.5rem 2rem;
+    padding: 2.5rem 2rem 3.5rem 2rem;
     font-size: 1.05rem;
     line-height: 1.8;
     white-space: pre-wrap;
@@ -92,9 +92,9 @@
 }
 
 .contentEditAction {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 1.5rem;
+    position: absolute;
+    bottom: 0.75rem;
+    right: 1.25rem;
 }
 
 .editButton {

@@ -10,6 +10,7 @@ import { ALL_USERS } from '@/lib/mock-posts';
 import { supabase } from '@/lib/supabase';
 import { Post } from '@/types/post';
 import { Reaction } from '@/types/post';
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import styles from './dashboard.module.css';
 
 export default function DashboardPage() {
@@ -73,7 +74,7 @@ export default function DashboardPage() {
     return (
         <AuthGuard>
             <div className={styles.container}>
-                {loading && <div style={{ padding: 20, textAlign: 'center' }}>読み込み中...</div>}
+                {loading && <LoadingSpinner />}
                 {error && <div style={{ padding: 20, color: 'red', textAlign: 'center' }}>エラー: {error}</div>}
                 {!loading && !error && (
                     <main className={styles.main}>

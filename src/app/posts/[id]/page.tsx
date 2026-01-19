@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import AuthGuard from '@/components/AuthGuard';
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import Button from '@/components/ui/Button';
 import Badge from '@/components/ui/Badge';
 import { ALL_USERS } from '@/lib/mock-posts';
@@ -17,7 +18,8 @@ export default function PostDetailPage() {
     const { user } = useAuth();
     const [post, setPost] = useState<Post | null>(null);
     const [activeTab, setActiveTab] = useState<'read' | 'unread'>('unread');
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true); // 初期ロード用
+    const [actionLoading, setActionLoading] = useState(false); // ボタンアクション用
 
     // 記事データのロード
     useEffect(() => {
@@ -32,6 +34,7 @@ export default function PostDetailPage() {
 
             if (error) {
                 console.error('Error fetching post:', error);
+                setLoading(false);
                 return;
             }
 
@@ -51,6 +54,7 @@ export default function PostDetailPage() {
                 };
                 setPost(formattedPost);
             }
+            setLoading(false);
         };
 
         fetchPost();
@@ -59,7 +63,7 @@ export default function PostDetailPage() {
     // リアクション処理
     const handleReaction = async (type: ReactionType) => {
         if (!user || !post) return;
-        setLoading(true);
+        setActionLoading(true);
 
         const newReaction = {
             userId: user.id || 'current_user',
@@ -90,15 +94,28 @@ export default function PostDetailPage() {
             console.error('Error updating reaction:', error);
             alert('更新に失敗しました');
         } finally {
-            setLoading(false);
+            setActionLoading(false);
         }
     };
+
+    if (loading) {
+        return (
+            <AuthGuard>
+                <div className={styles.container}>
+                    <LoadingSpinner />
+                </div>
+            </AuthGuard>
+        );
+    }
 
     if (!post) {
         return (
             <AuthGuard>
                 <div className={styles.container}>
-                    <p>読み込み中、または記事が見つかりません...</p>
+                    <p style={{ textAlign: 'center', padding: 20 }}>記事が見つかりません</p>
+                    <Link href="/apps/board" className={styles.backLink}>
+                        ← 掲示板に戻る
+                    </Link>
                 </div>
             </AuthGuard>
         );
@@ -159,7 +176,7 @@ export default function PostDetailPage() {
                                     <Button
                                         variant="primary"
                                         onClick={() => handleReaction('acknowledged')}
-                                        loading={loading}
+                                        loading={actionLoading}
                                     >
                                         了解しました
                                     </Button>
@@ -167,7 +184,7 @@ export default function PostDetailPage() {
                                         <Button
                                             variant="secondary"
                                             onClick={() => handleReaction('completed')}
-                                            loading={loading}
+                                            loading={actionLoading}
                                         >
                                             作業完了しました
                                         </Button>

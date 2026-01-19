@@ -4,6 +4,8 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
+
 export default function AuthGuard({ children }: { children: React.ReactNode }) {
     const { user, isLoading } = useAuth();
     const router = useRouter();
@@ -15,11 +17,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
     }, [user, isLoading, router]);
 
     if (isLoading) {
-        return (
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-                <p>Loading...</p>
-            </div>
-        );
+        return <LoadingSpinner fullScreen />;
     }
 
     if (!user) {

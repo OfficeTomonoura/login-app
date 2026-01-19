@@ -30,7 +30,7 @@ export default function PostCard({ post, unreadCount, totalUsers }: PostCardProp
     };
 
     return (
-        <div className={`${styles.card} ${myReaction ? styles.read : styles.unread}`}>
+        <Link href={`/posts/${post.id}`} className={`${styles.card} ${myReaction ? styles.read : styles.unread}`}>
             <div className={styles.header}>
                 <div className={styles.meta}>
                     <img src={post.authorAvatar} alt={post.authorName} className={styles.avatar} />
@@ -45,10 +45,10 @@ export default function PostCard({ post, unreadCount, totalUsers }: PostCardProp
                 </div>
             </div>
 
-            <Link href={`/posts/${post.id}`} className={styles.contentLink}>
+            <div className={styles.content}>
                 <h3 className={styles.title}>{post.title}</h3>
                 <p className={styles.preview}>{post.content.substring(0, 100)}{post.content.length > 100 ? '...' : ''}</p>
-            </Link>
+            </div>
 
             <div className={styles.footer}>
                 <div className={styles.stats}>
@@ -75,6 +75,6 @@ export default function PostCard({ post, unreadCount, totalUsers }: PostCardProp
                     )}
                 </div>
             </div>
-        </div>
+        </Link>
     );
 }

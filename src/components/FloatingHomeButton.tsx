@@ -17,8 +17,7 @@ export default function FloatingHomeButton() {
     useEffect(() => {
         if (!isAppPage) return;
 
-        const handleScroll = () => {
-            // スクロールしたら表示
+        const showButton = () => {
             setIsVisible(true);
 
             // 既存のタイマーをクリア
@@ -32,13 +31,16 @@ export default function FloatingHomeButton() {
             }, 1000);
         };
 
-        window.addEventListener('scroll', handleScroll, { passive: true });
+        const handleScroll = () => showButton();
+        const handleMouseMove = () => showButton();
 
-        // 初期表示時も少し出してから消すなどの演出を入れてもいいが、
-        // 今回は「スクロール中に出現」に忠実に実装する
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        // PC向けにマウス移動も検知
+        window.addEventListener('mousemove', handleMouseMove, { passive: true });
 
         return () => {
             window.removeEventListener('scroll', handleScroll);
+            window.removeEventListener('mousemove', handleMouseMove);
             if (timeoutRef.current) {
                 clearTimeout(timeoutRef.current);
             }

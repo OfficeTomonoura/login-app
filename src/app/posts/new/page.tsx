@@ -90,10 +90,6 @@ export default function NewPostPage() {
     return (
         <AuthGuard>
             <div className={styles.container}>
-                <Link href="/dashboard" className={styles.backLink}>
-                    ← ダッシュボードに戻る
-                </Link>
-
                 <div className={styles.card}>
                     <h1 className={styles.title}>新規投稿</h1>
 

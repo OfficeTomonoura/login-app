@@ -74,7 +74,7 @@ export default function DashboardLauncher() {
                     <div className={`${styles.iconWrapper} ${styles.post}`}>
                         ✍️
                     </div>
-                    <span className={styles.appName}>新規作成</span>
+                    <span className={styles.appName}>新規投稿</span>
                 </Link>
 
                 {/* マイページ */}

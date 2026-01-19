@@ -1,36 +1,92 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Login App
 
-## Getting Started
+ダミーアカウントで動作するログイン機能付きWebアプリケーション
 
-First, run the development server:
+## 🚀 機能
+
+- ✅ ユーザー認証（モックデータ）
+- ✅ ログイン/ログアウト
+- ✅ 認証状態の永続化（localStorage）
+- ✅ 保護されたルート（ダッシュボード）
+- ✅ モダンなUI/UX（グラスモーフィズム）
+- ✅ レスポンシブデザイン
+
+## 🛠️ 技術スタック
+
+- **フレームワーク**: Next.js 14+ (App Router)
+- **言語**: TypeScript
+- **スタイリング**: Vanilla CSS (CSS Modules)
+- **状態管理**: React Context API
+- **認証**: モックデータ（本番環境ではFirebase等に置き換え可能）
+
+## 📦 セットアップ
+
+### 前提条件
+
+- Node.js 18.x 以上
+- npm または yarn
+
+### インストール
 
 ```bash
+# 依存パッケージのインストール
+npm install
+
+# 開発サーバーの起動
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+ブラウザで [http://localhost:3000](http://localhost:3000) を開きます。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🔐 テストアカウント
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Email**: `test@example.com`
+- **Password**: `password123`
 
-## Learn More
+## 📁 プロジェクト構成
 
-To learn more about Next.js, take a look at the following resources:
+```
+login-app/
+├── src/
+│   ├── app/                    # Next.js App Router
+│   │   ├── auth/
+│   │   │   └── login/         # ログインページ
+│   │   ├── dashboard/         # ダッシュボード（要認証）
+│   │   ├── globals.css        # グローバルスタイル
+│   │   ├── layout.tsx         # ルートレイアウト
+│   │   └── page.tsx           # トップページ
+│   ├── components/
+│   │   ├── ui/                # 再利用可能なUIコンポーネント
+│   │   │   ├── Button.tsx
+│   │   │   └── Input.tsx
+│   │   └── AuthGuard.tsx      # 認証ガード
+│   ├── contexts/
+│   │   └── AuthContext.tsx    # 認証コンテキスト
+│   └── lib/
+│       └── mock-user.ts       # モックユーザーデータ
+├── public/                     # 静的ファイル
+├── package.json
+└── tsconfig.json
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🌐 デプロイ
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Vercel（推奨）
 
-## Deploy on Vercel
+1. GitHubリポジトリを作成
+2. Vercelアカウントでインポート
+3. 自動デプロイ完了
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### その他のプラットフォーム
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Netlify
+- Cloudflare Pages
+- AWS Amplify
+
+## 📝 ライセンス
+
+MIT
+
+## 👤 作成者
+
+デモプロジェクト - 2026

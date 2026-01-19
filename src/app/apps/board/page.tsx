@@ -105,11 +105,18 @@ export default function DashboardPage() {
         return true;
     });
 
-    // 投稿者リスト（重複排除）
-    const authors = Array.from(new Set(posts.map(p => p.authorId))).map(id => {
-        const p = posts.find(post => post.authorId === id);
-        return { id, name: p?.authorName || 'Unknown' };
-    });
+    // 投稿者リスト（重複排除・IDなし除外）
+    const authors = Array.from(
+        posts
+            .filter(p => p.authorId) // IDがないものは除外
+            .reduce((map, p) => {
+                if (!map.has(p.authorId)) {
+                    map.set(p.authorId, { id: p.authorId, name: p.authorName || 'Unknown' });
+                }
+                return map;
+            }, new Map<string, { id: string; name: string }>())
+            .values()
+    );
 
     return (
         <AuthGuard>

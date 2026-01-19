@@ -165,3 +165,17 @@
     appearance: none;
     -webkit-appearance: none;
 }
+
+/* 既存のfilterBarを上書きするための詳細度 */
+div.filterBar {
+    background-color: transparent; /* 背景色を透明に */
+    backdrop-filter: blur(8px);    /* すりガラス効果 */
+    border-bottom: 1px solid rgba(226, 232, 240, 0.6); /* 境界線を少し薄く */
+    
+    /* スマホなどで親のpaddingを無視して横いっぱいに広げる */
+    margin: 0 -16px;
+    padding: 12px 16px;
+    width: calc(100% + 32px);
+}
+
+/* 投稿者重複防止ロジック用など（特になし） */

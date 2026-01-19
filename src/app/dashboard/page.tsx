@@ -30,9 +30,10 @@ export default function DashboardLauncher() {
             if (error || !data) return;
 
             // 未読記事数を計算 (自分のリアクションがない記事)
-            const count = data.filter((item: any) => {
-                const reactions = item.reactions || [];
-                return !reactions.find((r: any) => r.userId === user.id);
+            const count = data.filter((item) => {
+                // Supabaseのレスポンスは型がつかないためキャスト
+                const reactions = (item.reactions as Reaction[]) || [];
+                return !reactions.find((r) => r.userId === user.id);
             }).length;
 
             setUnreadCount(count);

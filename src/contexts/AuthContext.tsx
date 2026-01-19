@@ -32,6 +32,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const storedUser = localStorage.getItem('mock_session_user');
         if (storedUser) {
             try {
+                // eslint-disable-next-line react-hooks/set-state-in-effect
                 setUser(JSON.parse(storedUser));
             } catch (e) {
                 console.error('Failed to parse session', e);
@@ -46,6 +47,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         await new Promise((resolve) => setTimeout(resolve, 800));
 
         if (email === MOCK_USER.email && pass === MOCK_USER.password) {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const { password, ...safeUser } = MOCK_USER;
             setUser(safeUser);
             localStorage.setItem('mock_session_user', JSON.stringify(safeUser));

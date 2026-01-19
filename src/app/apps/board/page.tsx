@@ -127,22 +127,28 @@ export default function DashboardPage() {
                 {!loading && !error && (
                     <main className={styles.main}>
                         <div className={styles.grid}>
-                            <div className={styles.card}>
+                            <div
+                                className={`${styles.card} ${styles.cardClickable} ${filterUnread ? styles.cardActiveUnread : ''}`}
+                                onClick={() => setFilterUnread(!filterUnread)}
+                            >
                                 <div className={styles.cardIcon}>📬</div>
                                 <h3 className={styles.cardTitle}>未読の記事</h3>
                                 <p className={styles.cardValue}>
                                     {posts.filter((p: Post) => user && !p.reactions.find((r: Reaction) => r.userId === user.id)).length}
                                 </p>
-                                <p className={styles.cardLabel}>要確認</p>
+                                <p className={styles.cardLabel}>{filterUnread ? '✅ 未読のみ表示中' : '要確認'}</p>
                             </div>
 
-                            <div className={styles.card}>
+                            <div
+                                className={`${styles.card} ${styles.cardClickable} ${filterIncomplete ? styles.cardActiveIncomplete : ''}`}
+                                onClick={() => setFilterIncomplete(!filterIncomplete)}
+                            >
                                 <div className={styles.cardIcon}>✅</div>
                                 <h3 className={styles.cardTitle}>完了した依頼</h3>
                                 <p className={styles.cardValue}>
                                     {posts.filter((p: Post) => p.type === 'request' && p.status === 'closed').length}
                                 </p>
-                                <p className={styles.cardLabel}>今月</p>
+                                <p className={styles.cardLabel}>{filterIncomplete ? '✅ 未完了のみ表示中' : '今月'}</p>
                             </div>
                         </div>
 
@@ -159,11 +165,13 @@ export default function DashboardPage() {
                                 <FilterChip
                                     label="🔥 未読"
                                     isActive={filterUnread}
+                                    variant="unread"
                                     onClick={() => setFilterUnread(!filterUnread)}
                                 />
                                 <FilterChip
                                     label="⚡️ 未完了"
                                     isActive={filterIncomplete}
+                                    variant="incomplete"
                                     onClick={() => setFilterIncomplete(!filterIncomplete)}
                                 />
 

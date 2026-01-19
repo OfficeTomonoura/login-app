@@ -177,3 +177,27 @@
     appearance: none;
     -webkit-appearance: none;
 }
+/* アクティブなカードの状態 */
+.cardActive {
+    border-color: #3b82f6;
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(30, 41, 59, 0.4) 100%);
+    box-shadow: 0 0 15px rgba(37, 99, 235, 0.2);
+}
+
+.cardActiveUnread {
+    border-color: #ea580c;
+    background: linear-gradient(135deg, rgba(234, 88, 12, 0.1) 0%, rgba(30, 41, 59, 0.4) 100%);
+    box-shadow: 0 0 15px rgba(234, 88, 12, 0.2);
+}
+
+.cardActiveIncomplete {
+    border-color: #ca8a04;
+    background: linear-gradient(135deg, rgba(202, 138, 4, 0.1) 0%, rgba(30, 41, 59, 0.4) 100%);
+    box-shadow: 0 0 15px rgba(202, 138, 4, 0.2);
+}
+
+/* クリック可能なカード */
+.cardClickable {
+    cursor: pointer;
+    user-select: none;
+}

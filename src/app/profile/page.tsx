@@ -46,12 +46,12 @@ export default function ProfilePage() {
         }
     };
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }));
+    const handleNameChange = (value: string) => {
+        setFormData(prev => ({ ...prev, name: value }));
+    };
+
+    const handleEmailChange = (value: string) => {
+        setFormData(prev => ({ ...prev, email: value }));
     };
 
     const handleCancel = () => {
@@ -96,9 +96,8 @@ export default function ProfilePage() {
                         <Input
                             label="名前"
                             type="text"
-                            name="name"
                             value={formData.name}
-                            onChange={handleChange}
+                            onChange={handleNameChange}
                             disabled={!isEditing}
                             required
                         />
@@ -106,9 +105,8 @@ export default function ProfilePage() {
                         <Input
                             label="メールアドレス"
                             type="email"
-                            name="email"
                             value={formData.email}
-                            onChange={handleChange}
+                            onChange={handleEmailChange}
                             disabled={!isEditing}
                             required
                         />

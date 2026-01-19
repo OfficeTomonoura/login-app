@@ -76,8 +76,8 @@ export default function NewPostPage() {
                 }),
             }).catch(err => console.error('Notification failed:', err));
 
-            // ダッシュボードに戻る
-            router.push('/dashboard');
+            // 掲示板に戻る
+            router.push('/apps/board');
             router.refresh(); // データ更新を反映させるために必要
         } catch (error) {
             console.error('Error creating post:', error);

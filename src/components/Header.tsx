@@ -28,7 +28,7 @@ export default function Header() {
                         // ログイン後のナビゲーション
                         <div className={styles.userSection}>
                             <Link href="/dashboard" className={styles.navLink}>
-                                ダッシュボード
+                                ホーム
                             </Link>
                             <Link href="/profile" className={styles.navLink}>
                                 プロフィール

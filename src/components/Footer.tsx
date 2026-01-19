@@ -1,7 +1,18 @@
+'use client';
+
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import styles from './Footer.module.css';
 
 export default function Footer() {
+    const pathname = usePathname();
+
+    // トップページまたは認証ページ以外では表示しない
+    const isPublicPage = pathname === '/' || pathname?.startsWith('/auth');
+    if (!isPublicPage) {
+        return null;
+    }
+
     const currentYear = new Date().getFullYear();
 
     return (

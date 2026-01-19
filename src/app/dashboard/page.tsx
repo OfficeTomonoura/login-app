@@ -1,113 +1,112 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import AuthGuard from '@/components/AuthGuard';
-import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
-import Button from '@/components/ui/Button';
-import PostCard from '@/components/PostCard';
-import { ALL_USERS } from '@/lib/mock-posts';
+import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabase';
-import { Post } from '@/types/post';
-import { Reaction } from '@/types/post';
-import styles from './dashboard.module.css';
+import { Post, Reaction } from '@/types/post';
+import styles from './launcher.module.css';
 
-export default function DashboardPage() {
+export default function DashboardLauncher() {
     const { user } = useAuth();
-    const [posts, setPosts] = useState<Post[]>([]);
+    const [unreadCount, setUnreadCount] = useState(0);
+    const [currentTime, setCurrentTime] = useState(new Date());
 
+    // 時計の更新
     useEffect(() => {
-        const fetchPosts = async () => {
-            const { data, error } = await supabase
-                .from('posts')
-                .select('*')
-                .order('created_at', { ascending: false });
-
-            if (error) {
-                console.error('Error fetching posts:', error);
-                return;
-            }
-
-            if (data) {
-                // DBの形式(snake_case)からアプリの形式(camelCase)へ変換
-                const formattedPosts: Post[] = data.map(item => ({
-                    id: item.id,
-                    title: item.title,
-                    content: item.content,
-                    type: item.type,
-                    status: item.status,
-                    authorId: item.author_id,
-                    authorName: item.author_name,
-                    authorAvatar: item.author_avatar,
-                    createdAt: item.created_at,
-                    reactions: item.reactions || []
-                }));
-                setPosts(formattedPosts);
-            }
-        };
-
-        fetchPosts();
+        const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+        return () => clearInterval(timer);
     }, []);
 
-    // 自分にとっての未読数を計算
-    const getUnreadCount = (post: Post) => {
-        // ここでの未読数は「全体での未読者数」を表示する仕様とする
-        // （自分が未読かどうかはPostCard内で判定）
-        const readCount = post.reactions.length;
-        return ALL_USERS.length - readCount;
+    // 未読数の取得
+    useEffect(() => {
+        const fetchUnread = async () => {
+            if (!user) return;
+
+            const { data, error } = await supabase
+                .from('posts')
+                .select('reactions');
+
+            if (error || !data) return;
+
+            // 未読記事数を計算 (自分のリアクションがない記事)
+            const count = data.filter((item: any) => {
+                const reactions = item.reactions || [];
+                return !reactions.find((r: any) => r.userId === user.id);
+            }).length;
+
+            setUnreadCount(count);
+        };
+
+        fetchUnread();
+    }, [user]);
+
+    const formatDate = (date: Date) => {
+        const days = ['日', '月', '火', '水', '木', '金', '土'];
+        return `${date.getMonth() + 1}月${date.getDate()}日 (${days[date.getDay()]})`;
+    };
+
+    const formatTime = (date: Date) => {
+        return date.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' });
     };
 
     return (
-        <AuthGuard>
-            <div className={styles.container}>
-                <main className={styles.main}>
-                    <div className={styles.welcome}>
-                        <h2 className={styles.welcomeTitle}>ようこそ、{user?.name}さん！</h2>
-                        <p className={styles.welcomeText}>
-                            社内の報告・連絡・相談を一元管理します。
-                        </p>
-                    </div>
-
-                    <div className={styles.grid}>
-                        <div className={styles.card}>
-                            <div className={styles.cardIcon}>📬</div>
-                            <h3 className={styles.cardTitle}>未読の記事</h3>
-                            <p className={styles.cardValue}>
-                                {posts.filter((p: Post) => user && !p.reactions.find((r: Reaction) => r.userId === user.id)).length}
-                            </p>
-                            <p className={styles.cardLabel}>要確認</p>
-                        </div>
-
-                        <div className={styles.card}>
-                            <div className={styles.cardIcon}>✅</div>
-                            <h3 className={styles.cardTitle}>完了した依頼</h3>
-                            <p className={styles.cardValue}>
-                                {posts.filter((p: Post) => p.type === 'request' && p.status === 'closed').length}
-                            </p>
-                            <p className={styles.cardLabel}>今月</p>
-                        </div>
-                    </div>
-
-                    <div className={styles.feedSection}>
-                        <div className={styles.feedHeader}>
-                            <h3 className={styles.sectionTitle}>最新の投稿</h3>
-                            <Link href="/posts/new">
-                                <Button variant="primary">＋ 新規投稿</Button>
-                            </Link>
-                        </div>
-                        <div className={styles.feed}>
-                            {posts.map(post => (
-                                <PostCard
-                                    key={post.id}
-                                    post={post}
-                                    unreadCount={getUnreadCount(post)}
-                                    totalUsers={ALL_USERS.length}
-                                />
-                            ))}
-                        </div>
-                    </div>
-                </main>
+        <div className={styles.container}>
+            <div className={styles.welcomeSection}>
+                <div className={styles.date}>{formatDate(currentTime)}</div>
+                <div className={styles.time}>{formatTime(currentTime)}</div>
             </div>
-        </AuthGuard>
+
+            <div className={styles.grid}>
+                {/* 掲示板アプリ */}
+                <Link href="/apps/board" className={styles.appItem}>
+                    <div className={`${styles.iconWrapper} ${styles.board}`}>
+                        📢
+                        {unreadCount > 0 && (
+                            <div className={styles.badge}>{unreadCount}</div>
+                        )}
+                    </div>
+                    <span className={styles.appName}>掲示板</span>
+                </Link>
+
+                {/* 投稿ショートカット */}
+                <Link href="/posts/new" className={styles.appItem}>
+                    <div className={`${styles.iconWrapper} ${styles.post}`}>
+                        ✍️
+                    </div>
+                    <span className={styles.appName}>新規作成</span>
+                </Link>
+
+                {/* マイページ */}
+                <Link href="/profile" className={styles.appItem}>
+                    <div className={`${styles.iconWrapper} ${styles.profile}`}>
+                        👤
+                    </div>
+                    <span className={styles.appName}>マイページ</span>
+                </Link>
+
+                {/* 以下ダミーアプリ */}
+                <div className={styles.appItem} onClick={() => alert('準備中です')}>
+                    <div className={`${styles.iconWrapper} ${styles.calendar}`}>
+                        📅
+                    </div>
+                    <span className={styles.appName}>カレンダー</span>
+                </div>
+
+                <div className={styles.appItem} onClick={() => alert('準備中です')}>
+                    <div className={`${styles.iconWrapper} ${styles.expenses}`}>
+                        💰
+                    </div>
+                    <span className={styles.appName}>経費精算</span>
+                </div>
+
+                <div className={styles.appItem} onClick={() => alert('サポートへお問い合わせください')}>
+                    <div className={`${styles.iconWrapper} ${styles.help}`}>
+                        ❓
+                    </div>
+                    <span className={styles.appName}>ヘルプ</span>
+                </div>
+            </div>
+        </div>
     );
 }

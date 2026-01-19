@@ -1,0 +1,117 @@
+.container {
+    padding: 24px 16px;
+    min-height: calc(100vh - 120px);
+    background: linear-gradient(to bottom, #f8fafc, #f1f5f9);
+}
+
+.welcomeSection {
+    margin-bottom: 32px;
+    text-align: center;
+}
+
+.time {
+    font-size: 48px;
+    font-weight: 200;
+    color: #334155;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    margin-bottom: 8px;
+}
+
+.date {
+    font-size: 16px;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    /* 4列グリッド */
+    gap: 24px 12px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.appItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    position: relative;
+    transition: transform 0.2s;
+}
+
+.appItem:active {
+    transform: scale(0.95);
+}
+
+.iconWrapper {
+    width: 60px;
+    height: 60px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    background: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    /* アイコンらしい影 */
+}
+
+/* アプリごとの色 */
+.board {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+}
+
+.post {
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    color: white;
+}
+
+.profile {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: white;
+}
+
+.calendar {
+    background: white;
+    color: #ef4444;
+}
+
+.expenses {
+    background: white;
+    color: #8b5cf6;
+}
+
+.help {
+    background: #cbd5e1;
+    color: #475569;
+}
+
+.appName {
+    font-size: 11px;
+    color: #334155;
+    font-weight: 500;
+    text-align: center;
+    line-height: 1.2;
+}
+
+.badge {
+    position: absolute;
+    top: -4px;
+    right: 4px;
+    background-color: #ef4444;
+    color: white;
+    font-size: 11px;
+    font-weight: bold;
+    min-width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #f8fafc;
+    z-index: 10;
+}

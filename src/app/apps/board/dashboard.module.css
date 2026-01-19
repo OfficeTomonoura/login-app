@@ -135,3 +135,33 @@
         font-size: 1.75rem;
     }
 }
+/* フィルターバーのスタイル */
+.filterBar {
+    display: flex;
+    gap: 8px;
+    padding: 12px 16px;
+    overflow-x: auto;
+    background-color: white;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    border-bottom: 1px solid #f1f5f9;
+    /* スクロールバーを隠す */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+.filterBar::-webkit-scrollbar {
+    display: none;
+}
+.filterSeparator {
+    width: 1px;
+    height: 24px;
+    background-color: #e2e8f0;
+    margin: 0 4px;
+    align-self: center;
+}
+
+.hiddenSelect {
+    appearance: none;
+    -webkit-appearance: none;
+}

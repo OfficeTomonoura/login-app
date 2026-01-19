@@ -1,0 +1,55 @@
+.chip {
+    display: inline-flex;
+    align-items: center;
+    height: 32px;
+    padding: 0 12px;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    background-color: white;
+    font-size: 13px;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    user-select: none;
+    flex-shrink: 0;
+    /* 横スクロール時に潰れないように */
+}
+
+.chip:active {
+    transform: scale(0.96);
+}
+
+/* アクティブ（選択中）の状態 */
+.active {
+    background-color: #eff6ff;
+    border-color: #3b82f6;
+    color: #2563eb;
+    font-weight: 500;
+}
+
+.icon {
+    margin-right: 6px;
+    font-size: 14px;
+}
+
+.arrow {
+    margin-left: 6px;
+    font-size: 8px;
+    opacity: 0.6;
+}
+
+/* ダークモード対応の布石 */
+@media (prefers-color-scheme: dark) {
+    .chip {
+        background-color: #1e293b;
+        border-color: #334155;
+        color: #94a3b8;
+    }
+
+    .active {
+        background-color: #1e3a8a;
+        border-color: #3b82f6;
+        color: #93c5fd;
+    }
+}

@@ -140,21 +140,22 @@ export default function PostDetailPage() {
                 </Link>
 
                 <article className={styles.article}>
+                    {user && post.authorId === user.id && (
+                        <div className={styles.editAction}>
+                            <Link href={`/posts/${post.id}/edit`}>
+                                <Button variant="secondary">✏️ 編集</Button>
+                            </Link>
+                        </div>
+                    )}
+
                     <div className={styles.header}>
                         <div className={styles.metaHeader}>
-                            <div className={styles.headerTop}>
-                                <div className={styles.authorInfo}>
-                                    <img src={post.authorAvatar} alt={post.authorName} className={styles.avatar} />
-                                    <div className={styles.authorText}>
-                                        <span className={styles.name}>{post.authorName}</span>
-                                        <span className={styles.time}>{new Date(post.createdAt).toLocaleString('ja-JP')}</span>
-                                    </div>
+                            <div className={styles.authorInfo}>
+                                <img src={post.authorAvatar} alt={post.authorName} className={styles.avatar} />
+                                <div className={styles.authorText}>
+                                    <span className={styles.name}>{post.authorName}</span>
+                                    <span className={styles.time}>{new Date(post.createdAt).toLocaleString('ja-JP')}</span>
                                 </div>
-                                {user && post.authorId === user.id && (
-                                    <Link href={`/posts/${post.id}/edit`}>
-                                        <Button variant="secondary">編集する</Button>
-                                    </Link>
-                                )}
                             </div>
                             <div className={styles.badges}>
                                 <Badge type={post.type} />

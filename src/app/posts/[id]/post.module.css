@@ -217,3 +217,14 @@
     width: 100%;
     margin-bottom: 0.5rem;
 }
+
+.editAction {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    z-index: 5;
+}
+
+.article {
+    position: relative; /* 編集ボタンの絶対配置の基準にする */
+}

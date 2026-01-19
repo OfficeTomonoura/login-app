@@ -142,12 +142,19 @@ export default function PostDetailPage() {
                 <article className={styles.article}>
                     <div className={styles.header}>
                         <div className={styles.metaHeader}>
-                            <div className={styles.authorInfo}>
-                                <img src={post.authorAvatar} alt={post.authorName} className={styles.avatar} />
-                                <div className={styles.authorText}>
-                                    <span className={styles.name}>{post.authorName}</span>
-                                    <span className={styles.time}>{new Date(post.createdAt).toLocaleString('ja-JP')}</span>
+                            <div className={styles.headerTop}>
+                                <div className={styles.authorInfo}>
+                                    <img src={post.authorAvatar} alt={post.authorName} className={styles.avatar} />
+                                    <div className={styles.authorText}>
+                                        <span className={styles.name}>{post.authorName}</span>
+                                        <span className={styles.time}>{new Date(post.createdAt).toLocaleString('ja-JP')}</span>
+                                    </div>
                                 </div>
+                                {user && post.authorId === user.id && (
+                                    <Link href={`/posts/${post.id}/edit`}>
+                                        <Button variant="secondary">編集する</Button>
+                                    </Link>
+                                )}
                             </div>
                             <div className={styles.badges}>
                                 <Badge type={post.type} />

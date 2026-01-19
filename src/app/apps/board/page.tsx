@@ -126,32 +126,6 @@ export default function DashboardPage() {
                 {error && <div style={{ padding: 20, color: 'red', textAlign: 'center' }}>エラー: {error}</div>}
                 {!loading && !error && (
                     <main className={styles.main}>
-                        <div className={styles.grid}>
-                            <div
-                                className={`${styles.card} ${styles.cardClickable} ${filterUnread ? styles.cardActiveUnread : ''}`}
-                                onClick={() => setFilterUnread(!filterUnread)}
-                            >
-                                <div className={styles.cardIcon}>📬</div>
-                                <h3 className={styles.cardTitle}>未読の記事</h3>
-                                <p className={styles.cardValue}>
-                                    {posts.filter((p: Post) => user && !p.reactions.find((r: Reaction) => r.userId === user.id)).length}
-                                </p>
-                                <p className={styles.cardLabel}>{filterUnread ? '✅ 未読のみ表示中' : '要確認'}</p>
-                            </div>
-
-                            <div
-                                className={`${styles.card} ${styles.cardClickable} ${filterIncomplete ? styles.cardActiveIncomplete : ''}`}
-                                onClick={() => setFilterIncomplete(!filterIncomplete)}
-                            >
-                                <div className={styles.cardIcon}>✅</div>
-                                <h3 className={styles.cardTitle}>完了した依頼</h3>
-                                <p className={styles.cardValue}>
-                                    {posts.filter((p: Post) => p.type === 'request' && p.status === 'closed').length}
-                                </p>
-                                <p className={styles.cardLabel}>{filterIncomplete ? '✅ 未完了のみ表示中' : '今月'}</p>
-                            </div>
-                        </div>
-
                         <div className={styles.feedSection}>
                             <div className={styles.feedHeader}>
                                 <h3 className={styles.sectionTitle}>最新の投稿</h3>

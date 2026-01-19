@@ -151,17 +151,21 @@ export default function DashboardPage() {
 
                                 <div className={styles.filterSeparator} />
 
-                                {/* 簡易的なドロップダウンUI (今回はセレクトボックスで代用) */}
+                                {/* 委員会フィルター (ダミー選択肢) */}
                                 <div style={{ position: 'relative' }}>
                                     <select
                                         className={styles.hiddenSelect}
-                                        onChange={(e) => alert('部署データがまだありません')}
+                                        onChange={(e) => alert(`${e.target.value}での絞り込みは、メンバー機能実装後に有効になります`)}
                                         value="all"
                                         style={{ position: 'absolute', opacity: 0, width: '100%', height: '100%', cursor: 'pointer' }}
                                     >
-                                        <option value="all">部署: すべて</option>
+                                        <option value="all">委員会: すべて</option>
+                                        <option value="somu">総務委員会</option>
+                                        <option value="koho">広報委員会</option>
+                                        <option value="kakudai">会員拡大委員会</option>
+                                        <option value="shinboku">親睦委員会</option>
                                     </select>
-                                    <FilterChip label="🏢 部署" hasDropdown />
+                                    <FilterChip label="🤝 委員会" hasDropdown />
                                 </div>
 
                                 <div style={{ position: 'relative' }}>

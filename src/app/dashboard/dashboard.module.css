@@ -1,136 +1,137 @@
 .container {
-    min-height: 100vh;
-    background: linear-gradient(135deg, hsl(var(--primary) / 0.05), hsl(var(--secondary) / 0.05));
-}
-
-.header {
-    background: hsl(var(--card));
-    border-bottom: 1px solid hsl(var(--border));
-    padding: 1.5rem 0;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-}
-
-.headerContent {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    padding: 2rem 1rem;
 }
 
-.title {
-    font-size: 1.5rem;
-    font-weight: 700;
+.main {
+    animation: fadeIn 0.5s ease-out;
+}
+
+.welcome {
+    margin-bottom: 2rem;
+    padding: 2rem;
+    background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--muted)) 100%);
+    border-radius: var(--radius-lg);
+    border: 1px solid hsl(var(--border) / 0.5);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.welcomeTitle {
+    font-size: 1.75rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
     background: linear-gradient(to right, hsl(var(--primary)), hsl(var(--secondary)));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
 }
 
-.userSection {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: var(--radius-full);
-    border: 2px solid hsl(var(--primary));
-}
-
-.userName {
-    font-weight: 500;
-    color: hsl(var(--foreground));
-}
-
-.main {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 2rem 1rem;
-}
-
-.welcome {
-    background: hsl(var(--card));
-    padding: 2rem;
-    border-radius: var(--radius-lg);
-    margin-bottom: 2rem;
-    border: 1px solid hsl(var(--border) / 0.5);
-}
-
-.welcomeTitle {
-    font-size: 1.875rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-    color: hsl(var(--foreground));
-}
-
 .welcomeText {
     color: hsl(var(--muted-foreground));
-    line-height: 1.6;
+    font-size: 1rem;
 }
 
 .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     gap: 1.5rem;
-    margin-bottom: 2rem;
+    margin-bottom: 3rem;
 }
 
 .card {
     background: hsl(var(--card));
     padding: 1.5rem;
     border-radius: var(--radius-lg);
-    border: 1px solid hsl(var(--border) / 0.5);
-    transition: all 0.2s;
-    text-align: center;
+    border: 1px solid hsl(var(--border));
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
 .card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 
 .cardIcon {
-    font-size: 2.5rem;
-    margin-bottom: 0.75rem;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    background: hsl(var(--muted));
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-md);
 }
 
 .cardTitle {
-    font-size: 0.875rem;
-    font-weight: 500;
+    font-size: 0.9rem;
+    font-weight: 600;
     color: hsl(var(--muted-foreground));
     margin-bottom: 0.5rem;
 }
 
 .cardValue {
     font-size: 2rem;
-    font-weight: 700;
+    font-weight: 800;
     color: hsl(var(--foreground));
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.5rem;
+    line-height: 1;
 }
 
 .cardLabel {
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     color: hsl(var(--muted-foreground));
-}
-
-.infoBox {
     background: hsl(var(--muted));
-    padding: 1.5rem;
-    border-radius: var(--radius-lg);
-    border-left: 4px solid hsl(var(--info));
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius-full);
 }
 
-.infoBox h3 {
-    margin-bottom: 0.75rem;
-    color: hsl(var(--foreground));
+.feedSection {
+    margin-top: 2rem;
 }
 
-.infoBox p {
-    color: hsl(var(--muted-foreground));
-    margin: 0.5rem 0;
-    line-height: 1.6;
+.feedHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.sectionTitle {
+    font-size: 1.5rem;
+    font-weight: 700;
+    padding-left: 0.5rem;
+    border-left: 4px solid hsl(var(--primary));
+}
+
+.feed {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 640px) {
+    .welcomeTitle {
+        font-size: 1.5rem;
+    }
+
+    .cardValue {
+        font-size: 1.75rem;
+    }
 }

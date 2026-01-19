@@ -1,0 +1,60 @@
+.badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+/* 記事タイプ */
+.report {
+    background: hsl(217 91% 60% / 0.1);
+    color: hsl(217 91% 60%);
+    border: 1px solid hsl(217 91% 60% / 0.2);
+}
+
+.request {
+    background: hsl(12 76% 56% / 0.1);
+    color: hsl(12 76% 56%);
+    border: 1px solid hsl(12 76% 56% / 0.2);
+}
+
+.notice {
+    background: hsl(45 93% 47% / 0.1);
+    color: hsl(45 93% 47%);
+    border: 1px solid hsl(45 93% 47% / 0.2);
+}
+
+/* ステータス */
+.open {
+    background: hsl(142 76% 36% / 0.1);
+    color: hsl(142 76% 36%);
+    border: 1px solid hsl(142 76% 36% / 0.2);
+}
+
+.closed {
+    background: hsl(var(--muted));
+    color: hsl(var(--muted-foreground));
+    border: 1px solid hsl(var(--border));
+}
+
+.draft {
+    background: hsl(var(--muted));
+    color: hsl(var(--foreground));
+    border: 1px dashed hsl(var(--border));
+}
+
+/* 既読状態 */
+.unread {
+    background: hsl(var(--destructive) / 0.1);
+    color: hsl(var(--destructive));
+}
+
+.read {
+    background: hsl(var(--muted));
+    color: hsl(var(--muted-foreground));
+}

@@ -8,6 +8,7 @@ type AuthContextType = {
     user: MockUser | null;
     login: (email: string, pass: string) => Promise<boolean>;
     logout: () => void;
+    updateProfile: (data: { name: string; email: string }) => Promise<void>;
     isLoading: boolean;
 };
 
@@ -15,6 +16,7 @@ const AuthContext = createContext<AuthContextType>({
     user: null,
     login: async () => false,
     logout: () => { },
+    updateProfile: async () => { },
     isLoading: true,
 });
 
@@ -58,8 +60,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         router.push('/auth/login');
     };
 
+    type UpdateProfileData = {
+        name: string;
+        email: string;
+    };
+
+    const updateProfile = async (data: UpdateProfileData): Promise<void> => {
+        // 擬似的なAPI遅延
+        await new Promise((resolve) => setTimeout(resolve, 800));
+
+        if (user) {
+            const updatedUser = { ...user, ...data };
+            setUser(updatedUser);
+            localStorage.setItem('mock_session_user', JSON.stringify(updatedUser));
+        }
+    };
+
     return (
-        <AuthContext.Provider value={{ user, login, logout, isLoading }}>
+        <AuthContext.Provider value={{ user, login, logout, updateProfile, isLoading }}>
             {children}
         </AuthContext.Provider>
     );

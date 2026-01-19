@@ -10,8 +10,10 @@ export default function Header() {
     const { user, logout } = useAuth();
     const pathname = usePathname();
 
-    // 認証ページではヘッダーを表示しない
-    if (pathname?.startsWith('/auth')) {
+    // トップページまたは認証ページのみヘッダーを表示
+    // (= ログイン後のアプリ画面ではヘッダーを消す)
+    const isPublicPage = pathname === '/' || pathname?.startsWith('/auth');
+    if (!isPublicPage) {
         return null;
     }
 

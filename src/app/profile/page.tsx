@@ -8,7 +8,7 @@ import Input from '@/components/ui/Input';
 import styles from './profile.module.css';
 
 export default function ProfilePage() {
-    const { user, updateProfile } = useAuth();
+    const { user, updateProfile, logout } = useAuth();
     const [isEditing, setIsEditing] = useState(false);
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
@@ -141,6 +141,17 @@ export default function ProfilePage() {
                             )}
                         </div>
                     </form>
+                </div>
+
+                <div className={styles.logoutSection}>
+                    <Button
+                        type="button"
+                        variant="ghost"
+                        onClick={logout}
+                        className={styles.logoutButton}
+                    >
+                        ログアウト
+                    </Button>
                 </div>
             </div>
         </AuthGuard>

@@ -24,6 +24,7 @@
     border: 1px solid hsl(var(--border));
     border-radius: var(--radius-lg);
     overflow: hidden;
+    position: relative;
 }
 
 .header {
@@ -87,6 +88,19 @@
     line-height: 1.8;
     white-space: pre-wrap;
     color: hsl(var(--foreground));
+    position: relative;
+}
+
+.contentEditAction {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1.5rem;
+}
+
+.editButton {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.75rem;
+    height: auto;
 }
 
 .actions {
@@ -209,21 +223,4 @@
     .title {
         font-size: 1.4rem;
     }
-}
-
-.nameRow {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-}
-
-.name {
-    font-weight: 600;
-    font-size: 1rem;
-}
-
-.editButton {
-    padding: 0.25rem 0.5rem;
-    font-size: 0.8rem;
-    height: auto;
 }

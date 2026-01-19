@@ -145,14 +145,7 @@ export default function PostDetailPage() {
                             <div className={styles.authorInfo}>
                                 <img src={post.authorAvatar} alt={post.authorName} className={styles.avatar} />
                                 <div className={styles.authorText}>
-                                    <div className={styles.nameRow}>
-                                        <span className={styles.name}>{post.authorName}</span>
-                                        {user && post.authorId === user.id && (
-                                            <Link href={`/posts/${post.id}/edit`}>
-                                                <Button variant="secondary" className={styles.editButton}>✏️ 編集</Button>
-                                            </Link>
-                                        )}
-                                    </div>
+                                    <span className={styles.name}>{post.authorName}</span>
                                     <span className={styles.time}>{new Date(post.createdAt).toLocaleString('ja-JP')}</span>
                                 </div>
                             </div>
@@ -166,6 +159,13 @@ export default function PostDetailPage() {
 
                     <div className={styles.content}>
                         {post.content}
+                        {user && post.authorId === user.id && (
+                            <div className={styles.contentEditAction}>
+                                <Link href={`/posts/${post.id}/edit`}>
+                                    <Button variant="secondary" className={styles.editButton}>✏️ 編集する</Button>
+                                </Link>
+                            </div>
+                        )}
                     </div>
 
                     <div className={styles.actions}>

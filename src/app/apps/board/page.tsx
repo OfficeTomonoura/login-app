@@ -206,7 +206,11 @@ export default function DashboardPage() {
                                             <option key={a.id} value={a.id}>{a.name}</option>
                                         ))}
                                     </select>
-                                    <FilterChip label={`👤 ${filterAuthor === 'all' ? '投稿者' : '選択中'}`} isActive={filterAuthor !== 'all'} hasDropdown />
+                                    <FilterChip
+                                        label={`👤 ${filterAuthor === 'all' ? '投稿者' : (authors.find(a => a.id === filterAuthor)?.name || '選択中')}`}
+                                        isActive={filterAuthor !== 'all'}
+                                        hasDropdown
+                                    />
                                 </div>
                             </div>
 

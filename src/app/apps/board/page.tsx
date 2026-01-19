@@ -77,13 +77,6 @@ export default function DashboardPage() {
                 {error && <div style={{ padding: 20, color: 'red', textAlign: 'center' }}>エラー: {error}</div>}
                 {!loading && !error && (
                     <main className={styles.main}>
-                        <div className={styles.welcome}>
-                            <h2 className={styles.welcomeTitle}>ようこそ、{user?.name}さん！</h2>
-                            <p className={styles.welcomeText}>
-                                社内の報告・連絡・相談を一元管理します。
-                            </p>
-                        </div>
-
                         <div className={styles.grid}>
                             <div className={styles.card}>
                                 <div className={styles.cardIcon}>📬</div>

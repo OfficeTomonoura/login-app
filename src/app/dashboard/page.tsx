@@ -6,8 +6,10 @@ import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
 import PostCard from '@/components/PostCard';
-import { INITIAL_POSTS, ALL_USERS } from '@/lib/mock-posts';
+import { ALL_USERS } from '@/lib/mock-posts';
+import { supabase } from '@/lib/supabase';
 import { Post } from '@/types/post';
+import { Reaction } from '@/types/post';
 import styles from './dashboard.module.css';
 
 export default function DashboardPage() {
@@ -15,14 +17,36 @@ export default function DashboardPage() {
     const [posts, setPosts] = useState<Post[]>([]);
 
     useEffect(() => {
-        // ローカルストレージから記事を取得、なければ初期データ
-        const storedPosts = localStorage.getItem('mock_posts');
-        if (storedPosts) {
-            setPosts(JSON.parse(storedPosts));
-        } else {
-            setPosts(INITIAL_POSTS);
-            localStorage.setItem('mock_posts', JSON.stringify(INITIAL_POSTS));
-        }
+        const fetchPosts = async () => {
+            const { data, error } = await supabase
+                .from('posts')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                console.error('Error fetching posts:', error);
+                return;
+            }
+
+            if (data) {
+                // DBの形式(snake_case)からアプリの形式(camelCase)へ変換
+                const formattedPosts: Post[] = data.map(item => ({
+                    id: item.id,
+                    title: item.title,
+                    content: item.content,
+                    type: item.type,
+                    status: item.status,
+                    authorId: item.author_id,
+                    authorName: item.author_name,
+                    authorAvatar: item.author_avatar,
+                    createdAt: item.created_at,
+                    reactions: item.reactions || []
+                }));
+                setPosts(formattedPosts);
+            }
+        };
+
+        fetchPosts();
     }, []);
 
     // 自分にとっての未読数を計算
@@ -49,7 +73,7 @@ export default function DashboardPage() {
                             <div className={styles.cardIcon}>📬</div>
                             <h3 className={styles.cardTitle}>未読の記事</h3>
                             <p className={styles.cardValue}>
-                                {posts.filter(p => user && !p.reactions.find(r => r.userId === user.id)).length}
+                                {posts.filter((p: Post) => user && !p.reactions.find((r: Reaction) => r.userId === user.id)).length}
                             </p>
                             <p className={styles.cardLabel}>要確認</p>
                         </div>
@@ -58,7 +82,7 @@ export default function DashboardPage() {
                             <div className={styles.cardIcon}>✅</div>
                             <h3 className={styles.cardTitle}>完了した依頼</h3>
                             <p className={styles.cardValue}>
-                                {posts.filter(p => p.type === 'request' && p.status === 'closed').length}
+                                {posts.filter((p: Post) => p.type === 'request' && p.status === 'closed').length}
                             </p>
                             <p className={styles.cardLabel}>今月</p>
                         </div>

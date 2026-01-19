@@ -7,8 +7,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import AuthGuard from '@/components/AuthGuard';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
-import { INITIAL_POSTS } from '@/lib/mock-posts';
-import { Post, PostType } from '@/types/post';
+import { supabase } from '@/lib/supabase';
+import { PostType } from '@/types/post';
 import styles from './new-post.module.css';
 
 export default function NewPostPage() {
@@ -43,26 +43,24 @@ export default function NewPostPage() {
             // API遅延シミュレーション
             await new Promise(resolve => setTimeout(resolve, 800));
 
-            // 新しい記事データを作成
-            const newPost: Post = {
-                id: `post_${Date.now()}`,
-                title: formData.title,
-                content: formData.content,
-                authorId: user.id || 'user_demo',
-                authorName: user.name,
-                authorAvatar: user.avatarUrl || 'https://api.dicebear.com/7.x/avataaars/svg?seed=Demo',
-                type: formData.type,
-                status: 'open',
-                createdAt: new Date().toISOString(),
-                reactions: []
-            };
+            // Supabaseへ保存
+            const { error } = await supabase
+                .from('posts')
+                .insert([
+                    {
+                        title: formData.title,
+                        content: formData.content,
+                        type: formData.type,
+                        status: 'open',
+                        author_id: user.id,
+                        author_name: user.name,
+                        author_avatar: user.avatarUrl,
+                        reactions: [],
+                        // created_at はDB側で自動生成されるので省略可
+                    }
+                ]);
 
-            // localStorageから既存データを取得して追加
-            const storedPosts = localStorage.getItem('mock_posts');
-            const posts = storedPosts ? JSON.parse(storedPosts) : INITIAL_POSTS;
-            const updatedPosts = [newPost, ...posts];
-
-            localStorage.setItem('mock_posts', JSON.stringify(updatedPosts));
+            if (error) throw error;
 
             // LINE通知送信（非同期で実行し、失敗しても投稿はブロックしない）
             fetch('/api/send-line', {
@@ -82,7 +80,7 @@ export default function NewPostPage() {
             router.push('/dashboard');
             router.refresh(); // データ更新を反映させるために必要
         } catch (error) {
-            console.error(error);
+            console.error('Error creating post:', error);
             alert('投稿に失敗しました');
         } finally {
             setLoading(false);

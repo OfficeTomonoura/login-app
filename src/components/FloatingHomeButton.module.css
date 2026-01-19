@@ -1,0 +1,54 @@
+.button {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background-color: rgba(30, 41, 59, 0.9);
+    /* 少し透けた濃い色 */
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    z-index: 1000;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    pointer-events: none;
+    /* 見えていない時はクリックできないようにする */
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.button:active {
+    transform: scale(0.95);
+}
+
+.icon {
+    width: 24px;
+    height: 24px;
+}
+
+/* スマホではブラウザのバーと被らないように少し上に配置 */
+@media (max-width: 768px) {
+    .button {
+        bottom: 90px;
+    }
+}
+
+/* PCの場合はホバー効果をつける */
+@media (min-width: 769px) {
+    .button:hover {
+        background-color: rgba(15, 23, 42, 1);
+        transform: translateY(-2px);
+    }
+}

@@ -7,7 +7,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import AuthGuard from '@/components/AuthGuard';
 import Button from '@/components/ui/Button';
 import Badge from '@/components/ui/Badge';
-import { INITIAL_POSTS, ALL_USERS } from '@/lib/mock-posts';
+import { ALL_USERS } from '@/lib/mock-posts';
+import { supabase } from '@/lib/supabase';
 import { Post, ReactionType } from '@/types/post';
 import styles from './post.module.css';
 
@@ -18,29 +19,47 @@ export default function PostDetailPage() {
     const [activeTab, setActiveTab] = useState<'read' | 'unread'>('unread');
     const [loading, setLoading] = useState(false);
 
-    // 記事データのロード（モック）
+    // 記事データのロード
     useEffect(() => {
-        // 実際にはAPIから取得するが、今回はモックデータから検索
-        // localStorageにあればそれを使う
-        const storedPosts = localStorage.getItem('mock_posts');
-        const posts = storedPosts ? JSON.parse(storedPosts) : INITIAL_POSTS;
+        const fetchPost = async () => {
+            if (!params?.id) return;
 
-        // params.idが存在するか確認
-        if (params && params.id) {
-            const foundPost = posts.find((p: Post) => p.id === params.id);
-            if (foundPost) {
-                setPost(foundPost);
+            const { data, error } = await supabase
+                .from('posts')
+                .select('*')
+                .eq('id', params.id)
+                .single();
+
+            if (error) {
+                console.error('Error fetching post:', error);
+                return;
             }
-        }
+
+            if (data) {
+                // スネークケース -> キャメルケース変換
+                const formattedPost: Post = {
+                    id: data.id,
+                    title: data.title,
+                    content: data.content,
+                    type: data.type,
+                    status: data.status,
+                    authorId: data.author_id,
+                    authorName: data.author_name,
+                    authorAvatar: data.author_avatar,
+                    createdAt: data.created_at,
+                    reactions: data.reactions || []
+                };
+                setPost(formattedPost);
+            }
+        };
+
+        fetchPost();
     }, [params]);
 
     // リアクション処理
     const handleReaction = async (type: ReactionType) => {
         if (!user || !post) return;
         setLoading(true);
-
-        // API遅延のシミュレーション
-        await new Promise(resolve => setTimeout(resolve, 500));
 
         const newReaction = {
             userId: user.id || 'current_user',
@@ -55,16 +74,24 @@ export default function PostDetailPage() {
             newReaction
         ];
 
-        const updatedPost = { ...post, reactions: updatedReactions };
-        setPost(updatedPost);
+        // DB更新
+        try {
+            const { error } = await supabase
+                .from('posts')
+                .update({ reactions: updatedReactions })
+                .eq('id', post.id);
 
-        // 全データの更新と保存
-        const storedPosts = localStorage.getItem('mock_posts');
-        const allPosts = storedPosts ? JSON.parse(storedPosts) : INITIAL_POSTS;
-        const newAllPosts = allPosts.map((p: Post) => p.id === post.id ? updatedPost : p);
-        localStorage.setItem('mock_posts', JSON.stringify(newAllPosts));
+            if (error) throw error;
 
-        setLoading(false);
+            // ローカルステート更新
+            const updatedPost = { ...post, reactions: updatedReactions };
+            setPost(updatedPost);
+        } catch (error) {
+            console.error('Error updating reaction:', error);
+            alert('更新に失敗しました');
+        } finally {
+            setLoading(false);
+        }
     };
 
     if (!post) {
@@ -91,8 +118,8 @@ export default function PostDetailPage() {
     return (
         <AuthGuard>
             <div className={styles.container}>
-                <Link href="/dashboard" className={styles.backLink}>
-                    ← ダッシュボードに戻る
+                <Link href="/apps/board" className={styles.backLink}>
+                    ← 掲示板に戻る
                 </Link>
 
                 <article className={styles.article}>

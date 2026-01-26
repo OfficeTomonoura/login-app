@@ -1,30 +1,43 @@
-# Login App
+# 25JC Portal App
 
-ダミーアカウントで動作するログイン機能付きWebアプリケーション
+Supabaseを基盤とした、高機能な会員管理・情報共有プラットフォーム。初期のデモ段階から、実運用を見据えたアーキテクチャへと進化しました。
 
-## 🚀 機能
+## 🚀 主要機能
 
-- ✅ ユーザー認証（モックデータ）
-- ✅ ログイン/ログアウト
-- ✅ 認証状態の永続化（localStorage）
-- ✅ 保護されたルート（ダッシュボード）
-- ✅ モダンなUI/UX（グラスモーフィズム）
-- ✅ レスポンシブデザイン
+- **高度なユーザー認証**:
+    - Supabase Authによる安全な認証システム
+    - 初回ログイン時のオンボーディング・フロー
+    - パスワード変更・管理機能
+- **プロフィール管理**:
+    - ユーザー情報の詳細登録（姓名、フリガナ、生年月日、電話番号、住所、勤務先）
+    - 所属員会・役職の年度別管理（マスターデータ連動）
+    - プロフィール画像の自由なクロップと保存
+- **インフラ・ストレージ**:
+    - **Supabase DB (PostgreSQL)**: プロフィール、投稿、マスターデータの一元管理
+    - **Supabase Storage**: ユーザーごとのセキュアなストレージ空間
+    - **RLS (Row Level Security)**: 徹底したアクセス制御（自分のデータのみ管理）
+- **モダンなUI/UX**:
+    - グラスモーフィズム（Dark Glass）テーマ
+    - レスポンシブデザイン（モバイル・PC対応）
+    - `DatePicker`による直感的な日付入力
 
 ## 🛠️ 技術スタック
 
-- **フレームワーク**: Next.js 14+ (App Router)
+- **フロントエンド**: Next.js 14 (App Router)
 - **言語**: TypeScript
 - **スタイリング**: Vanilla CSS (CSS Modules)
-- **状態管理**: React Context API
-- **認証**: モックデータ（本番環境ではFirebase等に置き換え可能）
+- **バックエンド/BaaS**: Supabase
+    - Auth (認証)
+    - Database (PostgreSQL)
+    - Storage (オブジェクトストレージ)
+- **ステート管理**: React Context API
+- **主要ライブラリ**: `react-easy-crop`, `@supabase/supabase-js`
 
 ## 📦 セットアップ
 
 ### 前提条件
-
 - Node.js 18.x 以上
-- npm または yarn
+- Supabaseプロジェクトの作成と環境変数の設定
 
 ### インストール
 
@@ -36,57 +49,28 @@ npm install
 npm run dev
 ```
 
-ブラウザで [http://localhost:3000](http://localhost:3000) を開きます。
-
-## 🔐 テストアカウント
-
-- **Email**: `test@example.com`
-- **Password**: `password123`
-
 ## 📁 プロジェクト構成
 
 ```
 login-app/
 ├── src/
 │   ├── app/                    # Next.js App Router
-│   │   ├── auth/
-│   │   │   └── login/         # ログインページ
-│   │   ├── dashboard/         # ダッシュボード（要認証）
-│   │   ├── globals.css        # グローバルスタイル
-│   │   ├── layout.tsx         # ルートレイアウト
-│   │   └── page.tsx           # トップページ
+│   │   ├── auth/               # ログイン・オンボーディング
+│   │   ├── dashboard/          # メインダッシュボード
+│   │   ├── profile/            # プロフィール閲覧・編集
+│   │   └── layout.tsx
 │   ├── components/
-│   │   ├── ui/                # 再利用可能なUIコンポーネント
-│   │   │   ├── Button.tsx
-│   │   │   └── Input.tsx
-│   │   └── AuthGuard.tsx      # 認証ガード
+│   │   ├── ui/                 # Button, Input, DatePicker等
+│   │   └── AuthGuard.tsx       # 認証ガード
 │   ├── contexts/
-│   │   └── AuthContext.tsx    # 認証コンテキスト
-│   └── lib/
-│       └── mock-user.ts       # モックユーザーデータ
-├── public/                     # 静的ファイル
-├── package.json
-└── tsconfig.json
+│   │   └── SupabaseAuthContext # Supabase連携コンテキスト
+│   └── types/                  # 型定義（post.ts等）
+├── supabase_schema.sql         # データベース・ストレージ定義
+└── package.json
 ```
 
-## 🌐 デプロイ
-
-### Vercel（推奨）
-
-1. GitHubリポジトリを作成
-2. Vercelアカウントでインポート
-3. 自動デプロイ完了
-
-### その他のプラットフォーム
-
-- Netlify
-- Cloudflare Pages
-- AWS Amplify
-
-## 📝 ライセンス
-
-MIT
+## 📝 開発状況の確認
+開発の進捗やコミット履歴の詳細は、`dev_portal/index.html`（プロジェクト状況モニター）でリアルタイムに確認できます。
 
 ## 👤 作成者
-
-デモプロジェクト - 2026
+25JC 開発チーム - 2026

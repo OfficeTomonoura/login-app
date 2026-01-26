@@ -1,0 +1,292 @@
+.container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    /* 横の余白を少し詰める */
+    background: transparent;
+    /* 背景ブロブが見えるように透明化 */
+}
+
+.content {
+    width: 100%;
+    max-width: 600px;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.title {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(to right, hsl(var(--primary)), hsl(var(--secondary)));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.subtitle {
+    color: hsl(var(--muted-foreground));
+    line-height: 1.6;
+}
+
+.card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 24px;
+    padding: 2.5rem;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.avatarSection {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid hsl(var(--border));
+}
+
+.avatarInputWrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.imageActions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.fileSelectBtn {
+    white-space: nowrap;
+    font-size: 0.9rem;
+    padding: 0.6rem 1rem;
+}
+
+.urlInput {
+    flex: 1;
+}
+
+.label {
+    color: var(--foreground);
+    font-weight: 500;
+    font-size: 0.95rem;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.hint {
+    font-size: 0.75rem;
+    color: hsl(var(--muted-foreground));
+    margin-top: 0.25rem;
+}
+
+.submitBtn {
+    margin-top: 1rem;
+    width: 100%;
+}
+
+.loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    font-weight: 500;
+    color: hsl(var(--muted-foreground));
+}
+
+/* 委員会登録セクション */
+.committeeSection {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid hsl(var(--border));
+}
+
+.committeeSectionHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.addCommitteeBtn {
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+}
+
+.committeeCard {
+    background: rgba(0, 0, 0, 0.3);
+    /* セクション内カードの背景を暗く */
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 16px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.committeeInputs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+}
+
+.inputWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.smallLabel {
+    color: var(--foreground);
+    font-weight: 500;
+    font-size: 0.85rem;
+}
+
+.input {
+    width: 100%;
+    padding: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.4);
+    /* ここもコントラスト強化 */
+    color: white;
+    font-size: 1rem;
+    transition: all 0.3s;
+}
+
+.input:focus {
+    outline: none;
+    border-color: hsl(var(--primary));
+    background: rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+}
+
+.input::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.removeBtn {
+    align-self: flex-start;
+    font-size: 0.85rem;
+    padding: 0.4rem 0.8rem;
+    color: hsl(var(--destructive));
+}
+
+.removeBtn:hover {
+    background: hsl(var(--destructive) / 0.1);
+}
+
+@media (max-width: 640px) {
+    .container {
+        padding: 1rem;
+    }
+
+    .card {
+        padding: 1.5rem;
+        /* スマホではカードの余白を少し小さく */
+        border-radius: 20px;
+    }
+
+    .title {
+        font-size: 1.5rem;
+    }
+
+    .committeeInputs {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .committeeSectionHeader {
+        flex-direction: row;
+        /* 横並びのまま */
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .addCommitteeBtn {
+        width: auto;
+        font-size: 0.8rem;
+    }
+}
+
+.sectionHeader {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 0.5rem;
+}
+
+.sectionTitle {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--foreground);
+}
+
+.select {
+    width: 100%;
+    padding: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.4);
+    color: white;
+    font-size: 1rem;
+    transition: all 0.3s;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1rem;
+    padding-right: 2.5rem;
+    cursor: pointer;
+}
+
+.select:focus {
+    outline: none;
+    border-color: hsl(var(--primary));
+    background-color: rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+}
+
+.select option {
+    background-color: #1a1a1a;
+
+    color: white;
+}
+
+.phoneSection {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.phoneInputs {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.phoneInputs .input {
+    text-align: center;
+}
+
+.errorText {
+    color: #ff4d4d;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}

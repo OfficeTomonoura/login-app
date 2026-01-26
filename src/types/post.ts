@@ -1,7 +1,14 @@
+export type Committee = {
+    year?: number;
+    name: string;
+    role: string;
+};
+
 export type User = {
     id: string;
     name: string;
     avatarUrl: string;
+    committees?: Committee[];
 };
 
 export type ReactionType = 'acknowledged' | 'completed';
@@ -27,4 +34,7 @@ export type Post = {
     status: PostStatus;
     createdAt: string;
     reactions: Reaction[];
+    favorites: string[]; // ユーザーIDの配列
+    targetUsers?: string[]; // 宛先指定されたユーザーのIDリスト
+    targetCommittees?: string[]; // 宛先指定された委員会の名称リスト
 };

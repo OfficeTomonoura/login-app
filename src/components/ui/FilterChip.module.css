@@ -51,6 +51,15 @@
     box-shadow: 0 0 10px rgba(202, 138, 4, 0.5);
 }
 
+/* お気に入りアクティブ：イエロー */
+.activeFavorite {
+    background-color: #d97706;
+    border-color: #fbbf24;
+    color: white;
+    font-weight: 600;
+    box-shadow: 0 0 10px rgba(217, 119, 6, 0.5);
+}
+
 .icon {
     margin-right: 6px;
     font-size: 14px;

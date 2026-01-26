@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter, Noto_Sans_JP } from 'next/font/google';
-import { AuthProvider } from '@/contexts/AuthContext';
+import { AuthProvider } from '@/contexts/SupabaseAuthContext';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import FloatingHomeButton from '@/components/FloatingHomeButton';
@@ -20,8 +20,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ja">
+    <html lang="ja" suppressHydrationWarning>
       <body className={`${inter.variable} ${notoSansJP.variable}`} style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+        <div className="background-blobs">
+          <div className="blob blob-1"></div>
+          <div className="blob blob-2"></div>
+          <div className="blob blob-3"></div>
+        </div>
         <AuthProvider>
           <Header />
           <main style={{ flex: 1 }}>

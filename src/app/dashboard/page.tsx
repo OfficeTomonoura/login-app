@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/SupabaseAuthContext';
 import { supabase } from '@/lib/supabase';
 import { Post, Reaction } from '@/types/post';
 import styles from './launcher.module.css';
@@ -71,11 +71,19 @@ export default function DashboardLauncher() {
                 </Link>
 
                 {/* 投稿ショートカット */}
-                <Link href="/posts/new" className={styles.appItem}>
+                <Link href="/posts/create" className={styles.appItem}>
                     <div className={`${styles.iconWrapper} ${styles.post}`}>
                         ✍️
                     </div>
                     <span className={styles.appName}>新規投稿</span>
+                </Link>
+
+                {/* メンバー名簿 */}
+                <Link href="/apps/members" className={styles.appItem}>
+                    <div className={`${styles.iconWrapper} ${styles.members}`}>
+                        👥
+                    </div>
+                    <span className={styles.appName}>名簿</span>
                 </Link>
 
                 {/* マイページ */}

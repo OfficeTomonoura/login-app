@@ -1,0 +1,81 @@
+.card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.card:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-4px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.avatarSection {
+    position: relative;
+    margin-bottom: 1rem;
+}
+
+.nameSection {
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
+
+.name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--foreground);
+    margin-bottom: 0.2rem;
+}
+
+.kana {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.roleBadge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: rgba(var(--primary-rgb), 0.2);
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+    border: 1px solid rgba(var(--primary-rgb), 0.3);
+}
+
+.company {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    margin-top: auto;
+    width: 100%;
+    justify-content: center;
+    padding-top: 0.8rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.committee {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-align: center;
+    margin-bottom: 0.5rem;
+    line-height: 1.4;
+}
+.badgeWrapper {
+    position: absolute;
+    bottom: -5px;
+    right: -5px;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}

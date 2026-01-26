@@ -1,0 +1,16 @@
+.badge {
+    background: linear-gradient(135deg, #FFD700 0%, #FDB931 100%);
+    color: #1a1a2e;
+    font-size: 0.65rem;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 18px;
+    letter-spacing: 0.5px;
+    z-index: 2;
+}

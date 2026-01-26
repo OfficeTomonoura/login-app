@@ -6,15 +6,15 @@ import { MOCK_USER, MockUser } from '@/lib/mock-user';
 
 type AuthContextType = {
     user: MockUser | null;
-    login: (email: string, pass: string) => Promise<boolean>;
+    login: (email: string, pass: string) => Promise<MockUser | null>;
     logout: () => void;
-    updateProfile: (data: { name: string; email: string }) => Promise<void>;
+    updateProfile: (data: Partial<MockUser>) => Promise<void>;
     isLoading: boolean;
 };
 
 const AuthContext = createContext<AuthContextType>({
     user: null,
-    login: async () => false,
+    login: async () => null,
     logout: () => { },
     updateProfile: async () => { },
     isLoading: true,
@@ -42,7 +42,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setIsLoading(false);
     }, []);
 
-    const login = async (email: string, pass: string): Promise<boolean> => {
+    const login = async (email: string, pass: string): Promise<MockUser | null> => {
         // 擬似的なAPI遅延
         await new Promise((resolve) => setTimeout(resolve, 800));
 
@@ -51,23 +51,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             const { password, ...safeUser } = MOCK_USER;
             setUser(safeUser);
             localStorage.setItem('mock_session_user', JSON.stringify(safeUser));
-            return true;
+            return safeUser;
         }
-        return false;
+        return null;
     };
 
     const logout = () => {
         setUser(null);
         localStorage.removeItem('mock_session_user');
-        router.push('/auth/login');
+        window.location.href = '/';
     };
 
-    type UpdateProfileData = {
-        name: string;
-        email: string;
-    };
-
-    const updateProfile = async (data: UpdateProfileData): Promise<void> => {
+    const updateProfile = async (data: Partial<MockUser>): Promise<void> => {
         // 擬似的なAPI遅延
         await new Promise((resolve) => setTimeout(resolve, 800));
 

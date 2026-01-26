@@ -3,13 +3,13 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/SupabaseAuthContext';
 import AuthGuard from '@/components/AuthGuard';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import { supabase } from '@/lib/supabase';
 import { PostType } from '@/types/post';
-import styles from '../../new/new-post.module.css';
+import styles from '../../create/new-post.module.css';
 
 export default function EditPostPage() {
     const router = useRouter();
@@ -51,11 +51,12 @@ export default function EditPostPage() {
                     return;
                 }
 
-                setFormData({
+                const postData = {
                     title: data.title,
                     content: data.content,
                     type: data.type,
-                });
+                };
+                setFormData(postData);
             } catch (err) {
                 console.error('Error fetching post:', err);
                 alert('データの読み込みに失敗しました');
@@ -126,6 +127,9 @@ export default function EditPostPage() {
     return (
         <AuthGuard>
             <div className={styles.container}>
+                <Link href={`/posts/${postId}`} className={styles.backButton} title="投稿に戻る">
+                    ◀︎
+                </Link>
                 <div className={styles.card}>
                     <h1 className={styles.title}>投稿を編集</h1>
 
@@ -194,7 +198,9 @@ export default function EditPostPage() {
 
                         <div className={styles.actions}>
                             <Link href={`/posts/${postId}`}>
-                                <Button variant="ghost" type="button">キャンセル</Button>
+                                <Button type="button" variant="ghost">
+                                    キャンセル
+                                </Button>
                             </Link>
                             <Button type="submit" variant="primary" loading={updating}>
                                 更新してリセット

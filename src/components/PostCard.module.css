@@ -1,23 +1,30 @@
-.card {
-    background: hsl(var(--card));
-    border: 1px solid hsl(var(--border));
-    border-radius: var(--radius-lg);
-    padding: 1.5rem;
-    transition: transform 0.2s, box-shadow 0.2s;
+/* .card styles removed, using generic Card component */
+
+.cardHover {
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     display: flex;
     flex-direction: column;
     gap: 1rem;
     text-decoration: none;
     color: inherit;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 1.5rem;
 }
 
-.card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+.cardHover:hover {
+    transform: translateY(-8px);
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
 }
 
 .unread {
-    border-left: 4px solid hsl(var(--primary));
+    border-left: 4px solid var(--primary);
+    box-shadow: inset 4px 0 15px -4px var(--primary);
 }
 
 .read {
@@ -36,13 +43,7 @@
     gap: 0.75rem;
 }
 
-.avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: var(--radius-full);
-    object-fit: cover;
-    border: 1px solid hsl(var(--border));
-}
+/* .avatar styles removed, using generic Avatar component */
 
 .info {
     display: flex;
@@ -51,13 +52,25 @@
 }
 
 .author {
-    font-weight: 600;
-    font-size: 0.9rem;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: white;
 }
 
 .date {
     font-size: 0.8rem;
-    color: hsl(var(--muted-foreground));
+    color: var(--text-muted);
+}
+
+.headerRight {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.favoriteIndicator {
+    font-size: 1.25rem;
+    color: hsl(45, 100%, 50%);
 }
 
 .badges {
@@ -71,17 +84,19 @@
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    height: 100%;
 }
 
 .title {
-    font-size: 1.1rem;
-    font-weight: 700;
+    font-size: 1.2rem;
+    font-weight: 800;
     line-height: 1.4;
+    color: white;
 }
 
 .preview {
-    font-size: 0.9rem;
-    color: hsl(var(--muted-foreground));
+    font-size: 0.95rem;
+    color: var(--text-muted);
     line-height: 1.6;
 }
 
@@ -91,14 +106,14 @@
     align-items: center;
     margin-top: auto;
     padding-top: 1rem;
-    border-top: 1px solid hsl(var(--border) / 0.5);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .stats {
     display: flex;
     gap: 1rem;
     font-size: 0.85rem;
-    color: hsl(var(--muted-foreground));
+    color: var(--text-muted);
 }
 
 .warning {

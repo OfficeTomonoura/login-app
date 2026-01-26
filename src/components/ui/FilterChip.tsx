@@ -3,7 +3,7 @@ import styles from './FilterChip.module.css';
 interface FilterChipProps {
     label: string;
     isActive?: boolean;
-    variant?: 'default' | 'unread' | 'incomplete';
+    variant?: 'default' | 'unread' | 'incomplete' | 'favorite';
     hasDropdown?: boolean;
     onClick?: () => void;
     icon?: string;
@@ -19,7 +19,8 @@ export default function FilterChip({
 }: FilterChipProps) {
     const activeClass = variant === 'unread' ? styles.activeUnread :
         variant === 'incomplete' ? styles.activeIncomplete :
-            styles.active;
+            variant === 'favorite' ? styles.activeFavorite :
+                styles.active;
 
     return (
         <button

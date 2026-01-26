@@ -2,11 +2,11 @@ import { Post, User } from '@/types/post';
 
 // 全ユーザーリスト（未読管理用）
 export const ALL_USERS: User[] = [
-    { id: 'user_1', name: 'デモ 太郎', avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix' },
-    { id: 'user_2', name: '佐藤 花子', avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka' },
-    { id: 'user_3', name: '鈴木 一郎', avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Zack' },
-    { id: 'user_4', name: '高橋 次郎', avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Ethan' },
-    { id: 'user_5', name: '伊藤 美咲', avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Bella' },
+    { id: 'user_1', name: 'デモ 太郎', avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix', committees: [{ name: '総務委員会', role: '委員' }] },
+    { id: 'user_2', name: '佐藤 花子', avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka', committees: [{ name: '広報委員会', role: '委員長' }] },
+    { id: 'user_3', name: '鈴木 一郎', avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Zack', committees: [{ name: '会員拡大委員会', role: '副委員長' }] },
+    { id: 'user_4', name: '高橋 次郎', avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Ethan', committees: [{ name: '親睦委員会', role: '委員' }] },
+    { id: 'user_5', name: '伊藤 美咲', avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Bella', committees: [{ name: '総務委員会', role: '副委員長' }] },
 ];
 
 export const INITIAL_POSTS: Post[] = [
@@ -24,6 +24,7 @@ export const INITIAL_POSTS: Post[] = [
             { userId: 'user_1', userName: 'デモ 太郎', type: 'acknowledged', timestamp: '2026-01-18T10:30:00.000Z' },
             { userId: 'user_3', userName: '鈴木 一郎', type: 'acknowledged', timestamp: '2026-01-18T11:00:00.000Z' },
         ],
+        favorites: [],
     },
     {
         id: 'post_2',
@@ -38,6 +39,7 @@ export const INITIAL_POSTS: Post[] = [
         reactions: [
             { userId: 'user_2', userName: '佐藤 花子', type: 'completed', timestamp: '2026-01-19T09:15:00.000Z' },
         ],
+        favorites: [],
     },
     {
         id: 'post_3',
@@ -50,5 +52,6 @@ export const INITIAL_POSTS: Post[] = [
         status: 'closed',
         createdAt: '2026-01-17T15:00:00.000Z',
         reactions: [],
+        favorites: [],
     },
 ];

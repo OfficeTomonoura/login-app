@@ -4,33 +4,44 @@
     padding: 0 1rem;
 }
 
-.backLink {
+.backButton {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    color: hsl(var(--muted-foreground));
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-full);
+    background-color: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    color: hsl(var(--foreground));
     text-decoration: none;
-    font-size: 0.9rem;
+    font-size: 1.25rem;
     margin-bottom: 1.5rem;
-    transition: color 0.2s;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px hsl(var(--foreground) / 0.05);
 }
 
-.backLink:hover {
-    color: hsl(var(--foreground));
+.backButton:hover {
+    background-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+    border-color: hsl(var(--primary));
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px hsl(var(--primary) / 0.2);
 }
 
 .article {
-    background: hsl(var(--card));
-    border: 1px solid hsl(var(--border));
-    border-radius: var(--radius-lg);
+    background: #151921;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 1.25rem;
     overflow: hidden;
     position: relative;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
 }
 
 .header {
     padding: 2rem;
-    border-bottom: 1px solid hsl(var(--border) / 0.5);
-    background: hsl(var(--muted) / 0.3);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.03);
 }
 
 .metaHeader {
@@ -76,6 +87,41 @@
     margin-top: 1rem;
 }
 
+.headerActions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.favoriteButton {
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    cursor: pointer;
+    padding: 0.4rem;
+    transition: all 0.2s ease;
+    color: hsl(var(--muted-foreground));
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.favoriteButton:hover:not(:disabled) {
+    transform: scale(1.15);
+    color: hsl(45, 100%, 50%);
+    filter: drop-shadow(0 0 6px hsl(45, 100%, 50%));
+}
+
+.favoriteButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.favorited {
+    color: hsl(45, 100%, 50%) !important;
+}
+
 .badges {
     margin-top: 1rem;
     display: flex;
@@ -83,30 +129,53 @@
 }
 
 .content {
-    padding: 2.5rem 2rem 3.5rem 2rem;
+    padding: 2.5rem 2rem 4rem 2rem !important;
+    /* 下部の余白を確実に確保 */
     font-size: 1.05rem;
     line-height: 1.8;
     white-space: pre-wrap;
     color: hsl(var(--foreground));
-    position: relative;
+    position: relative !important;
+    /* 絶対配置の基準 */
+    min-height: 100px;
 }
 
 .contentEditAction {
-    position: absolute;
-    bottom: 0.75rem;
-    right: 1.25rem;
+    position: absolute !important;
+    bottom: 1rem !important;
+    right: 1.25rem !important;
+    z-index: 10;
+    margin: 0 !important;
 }
 
 .editButton {
-    font-size: 0.85rem;
-    padding: 0.4rem 0.75rem;
-    height: auto;
+    font-size: 0.85rem !important;
+    padding: 0.5rem 0.9rem !important;
+    height: auto !important;
+    background-color: hsl(var(--primary) / 0.08) !important;
+    color: hsl(var(--primary)) !important;
+    border: 1px solid hsl(var(--primary) / 0.2) !important;
+    border-radius: var(--radius-md) !important;
+    box-shadow: none !important;
+    opacity: 1 !important;
+    font-weight: 600 !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.editButton:hover {
+    background-color: hsl(var(--primary)) !important;
+    color: hsl(var(--primary-foreground)) !important;
+    border-color: hsl(var(--primary)) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px hsl(var(--primary) / 0.2) !important;
 }
 
 .actions {
-    padding: 2rem;
-    background: hsl(var(--muted) / 0.2);
-    border-top: 1px solid hsl(var(--border));
+    padding: 3rem 2rem;
+    background: rgba(255, 255, 255, 0.02);
+    border-top: 2px solid rgba(255, 255, 255, 0.1);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -124,8 +193,29 @@
     gap: 1rem;
 }
 
+.reactionButtonActive {
+    border: 2px solid hsl(var(--primary)) !important;
+    background-color: hsl(var(--primary) / 0.15) !important;
+    color: hsl(var(--primary)) !important;
+    font-weight: 700 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px hsl(var(--primary) / 0.2) !important;
+}
+
+.reactionButtonInactive {
+    opacity: 0.7;
+    filter: grayscale(0.5);
+}
+
 .statusSection {
-    margin-top: 2rem;
+    margin-top: 3rem;
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1.25rem;
+    padding: 2.5rem;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
 }
 
 .statusHeader {
@@ -156,10 +246,16 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.75rem 1rem;
-    background: hsl(var(--card));
-    border: 1px solid hsl(var(--border));
+    padding: 0.85rem 1rem;
+    background: hsl(var(--muted) / 0.2);
+    border: 1px solid hsl(var(--border) / 0.5);
     border-radius: var(--radius-md);
+    transition: all 0.2s ease;
+}
+
+.userRow:hover {
+    background: hsl(var(--muted) / 0.4);
+    border-color: hsl(var(--primary) / 0.3);
 }
 
 .userInfo {

@@ -19,6 +19,31 @@
     color: hsl(var(--foreground));
 }
 
+.backButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-full);
+    background-color: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    color: hsl(var(--foreground));
+    text-decoration: none;
+    font-size: 1.25rem;
+    margin-bottom: 1.5rem;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px hsl(var(--foreground) / 0.05);
+}
+
+.backButton:hover {
+    background-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+    border-color: hsl(var(--primary));
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px hsl(var(--primary) / 0.2);
+}
+
 .card {
     background: hsl(var(--card));
     border: 1px solid hsl(var(--border));
@@ -121,6 +146,29 @@
 
 .radioInput {
     accent-color: hsl(var(--primary));
+}
+
+.cancelButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-full);
+    background-color: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    color: hsl(var(--muted-foreground));
+    text-decoration: none;
+    font-size: 1.5rem;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px hsl(var(--foreground) / 0.05);
+}
+
+.cancelButton:hover {
+    background-color: hsl(var(--error) / 0.1);
+    color: hsl(var(--error));
+    border-color: hsl(var(--error) / 0.3);
+    transform: scale(1.05);
 }
 
 /* レスポンシブ */

@@ -9,6 +9,7 @@ type ButtonProps = {
     loading?: boolean;
     onClick?: () => void;
     className?: string;
+    title?: string;
 };
 
 export default function Button({
@@ -19,6 +20,7 @@ export default function Button({
     loading = false,
     onClick,
     className = '',
+    title,
 }: ButtonProps) {
     return (
         <button
@@ -26,6 +28,7 @@ export default function Button({
             className={`${styles.btn} ${styles[variant]} ${className}`}
             disabled={disabled || loading}
             onClick={onClick}
+            title={title}
         >
             {loading ? 'Loading...' : children}
         </button>

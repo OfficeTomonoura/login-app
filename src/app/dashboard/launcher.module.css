@@ -1,45 +1,59 @@
 .container {
-    padding: 24px 16px;
-    min-height: calc(100vh - 120px);
-    background: linear-gradient(to bottom, #f8fafc, #f1f5f9);
+    padding: 40px 16px;
+    /* 上端の余白を少し確保 */
+    min-height: 100vh;
+    background: transparent;
+    /* 背景ブロブを見せるために透明化 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    /* 垂直方向の中央揃えを解除し、上詰めにする */
 }
 
 .welcomeSection {
-    margin-bottom: 32px;
+    margin-bottom: 48px;
     text-align: center;
 }
 
 .time {
-    font-size: 48px;
+    font-size: 72px;
+    /* 少し大きくして存在感を出す */
     font-weight: 200;
-    color: #334155;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: hsl(var(--foreground));
+    font-family: var(--font-inter), sans-serif;
     margin-bottom: 8px;
+    letter-spacing: -1px;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
 }
 
 .date {
-    font-size: 16px;
-    color: #64748b;
+    font-size: 18px;
+    color: var(--text-muted);
     font-weight: 500;
+    letter-spacing: 2px;
 }
 
 .grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    /* 4列グリッド */
-    gap: 24px 12px;
+    gap: 32px 24px;
     max-width: 600px;
-    margin: 0 auto;
+    width: 100%;
 }
 
 .appItem {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
+    gap: 12px;
     text-decoration: none;
     position: relative;
-    transition: transform 0.2s;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.appItem:hover {
+    transform: translateY(-5px);
 }
 
 .appItem:active {
@@ -47,71 +61,99 @@
 }
 
 .iconWrapper {
-    width: 60px;
-    height: 60px;
-    border-radius: 14px;
+    width: 72px;
+    /* 少しサイズアップ */
+    height: 72px;
+    border-radius: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 30px;
-    background: white;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    /* アイコンらしい影 */
+    font-size: 32px;
+    background: rgba(255, 255, 255, 0.05);
+    /* ガラスの基本背景 */
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
 }
 
-/* アプリごとの色 */
+.appItem:hover .iconWrapper {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* アプリごとのアクセント（グラデーションを薄く重ねる） */
 .board {
-    background: linear-gradient(135deg, #3b82f6, #2563eb);
-    color: white;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.4), rgba(37, 99, 235, 0.2));
 }
 
 .post {
-    background: linear-gradient(135deg, #22c55e, #16a34a);
-    color: white;
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.4), rgba(22, 163, 74, 0.2));
 }
 
 .profile {
-    background: linear-gradient(135deg, #f59e0b, #d97706);
-    color: white;
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.4), rgba(217, 119, 6, 0.2));
 }
 
 .calendar {
-    background: white;
-    color: #ef4444;
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .expenses {
-    background: white;
-    color: #8b5cf6;
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .help {
-    background: #cbd5e1;
-    color: #475569;
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .appName {
-    font-size: 11px;
-    color: #334155;
-    font-weight: 500;
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 600;
     text-align: center;
     line-height: 1.2;
+    transition: color 0.3s;
+}
+
+.appItem:hover .appName {
+    color: white;
 }
 
 .badge {
     position: absolute;
-    top: -4px;
-    right: 4px;
-    background-color: #ef4444;
+    top: -6px;
+    right: -6px;
+    background-color: hsl(var(--error));
     color: white;
-    font-size: 11px;
+    font-size: 12px;
     font-weight: bold;
-    min-width: 20px;
-    height: 20px;
-    border-radius: 10px;
+    min-width: 22px;
+    height: 22px;
+    border-radius: 11px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 2px solid #f8fafc;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     z-index: 10;
+}
+
+@media (max-width: 640px) {
+    .grid {
+        grid-template-columns: repeat(3, 1fr);
+        /* スマホでは3列に */
+        gap: 24px 16px;
+    }
+
+    .time {
+        font-size: 56px;
+    }
+}
+.members {
+    background: linear-gradient(135deg, rgba(52, 211, 153, 0.2) 0%, rgba(16, 185, 129, 0.2) 100%);
+    border: 1px solid rgba(52, 211, 153, 0.3);
+    color: #34d399;
+    box-shadow: 0 8px 32px 0 rgba(16, 185, 129, 0.15);
 }

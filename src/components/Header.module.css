@@ -2,11 +2,10 @@
     position: sticky;
     top: 0;
     z-index: 100;
-    background: hsl(var(--card));
-    border-bottom: 1px solid hsl(var(--border));
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-    backdrop-filter: blur(10px);
-    background: hsl(var(--card) / 0.95);
+    background: rgba(10, 10, 20, 0.6);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 0.5rem 0;
 }
 
 .container {
@@ -38,10 +37,20 @@
 }
 
 .logoText {
-    background: linear-gradient(to right, hsl(var(--primary)), hsl(var(--secondary)));
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: -1px;
+    background: linear-gradient(to right, #fff, #999);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+}
+
+.logoText::after {
+    content: '.app';
+    color: hsl(var(--primary));
+    font-size: 1.1rem;
+    -webkit-text-fill-color: initial;
 }
 
 .nav {
@@ -57,38 +66,36 @@
 }
 
 .navLink {
-    color: hsl(var(--foreground));
+    color: var(--text-muted);
     text-decoration: none;
-    font-weight: 500;
+    font-size: 0.95rem;
+    font-weight: 600;
     padding: 0.5rem 1rem;
     border-radius: var(--radius-md);
-    transition: all 0.2s;
+    transition: all 0.3s ease;
 }
 
 .navLink:hover {
-    background: hsl(var(--muted));
-    color: hsl(var(--primary));
+    color: white;
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .userInfo {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    padding: 0.5rem 1rem;
-    background: hsl(var(--muted));
-    border-radius: var(--radius-md);
+    padding: 0.4rem 0.8rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
 }
 
-.avatar {
-    width: 32px;
-    height: 32px;
-    border-radius: var(--radius-full);
-    border: 2px solid hsl(var(--primary));
-}
+/* .avatar styles removed, using generic Avatar component */
 
 .userName {
-    font-weight: 500;
-    color: hsl(var(--foreground));
+    font-weight: 600;
+    color: white;
+    font-size: 0.9rem;
 }
 
 .authButtons {

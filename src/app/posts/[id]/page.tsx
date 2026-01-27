@@ -333,6 +333,11 @@ export default function PostDetailPage() {
                     </div>
 
                     <div className={styles.actions}>
+                        {user && post.authorId === user.id && (
+                            <div className={styles.adjustmentOverlay}>
+                                <div className={styles.adjustmentBadge}>自身の投稿です</div>
+                            </div>
+                        )}
                         <div className={styles.actionMessage}>
                             {myReaction ? (
                                 <>

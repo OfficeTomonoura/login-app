@@ -11,11 +11,12 @@ import { useAuth } from '@/contexts/SupabaseAuthContext';
 
 type PostCardProps = {
     post: Post;
+    readCount: number;
     unreadCount: number;
     totalUsers: number;
 };
 
-export default function PostCard({ post, unreadCount, totalUsers }: PostCardProps) {
+export default function PostCard({ post, readCount, unreadCount, totalUsers }: PostCardProps) {
     const { user } = useAuth();
 
     // 自分のリアクションがあるか確認
@@ -68,7 +69,7 @@ export default function PostCard({ post, unreadCount, totalUsers }: PostCardProp
                     <div className={styles.stats}>
                         <div className={styles.statItem}>
                             <span>既読</span>
-                            <strong>{post.reactions.length} / {totalUsers}</strong>
+                            <strong>{readCount} / {totalUsers}</strong>
                         </div>
                         {unreadCount > 0 && (
                             <div className={`${styles.statItem} ${styles.warning}`}>

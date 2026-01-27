@@ -91,23 +91,22 @@ export default function DashboardPage() {
         fetchData();
     }, []);
 
-    // 自分にとっての未読数を計算
-    const getUnreadCount = (post: Post) => {
-        // ここでの未読数は「全体での未読者数」を表示する仕様とする
-        // （自分が未読かどうかはPostCard内で判定）
-        const readCount = post.reactions.length;
+    // 既読・未読の統計数値を計算（投稿者本人を除外）
+    const getPostStats = (post: Post) => {
+        // 1. 投稿者本人を除いた既読数
+        const readCount = post.reactions.filter(r => r.userId !== post.authorId).length;
 
-        // ターゲット指定がある場合は、母数がtotalMemberCountではないが、
-        // 一覧表示時点では厳密なターゲット数を計算するのがコスト高なので、
-        // 簡易的に「全体 - 既読数」または「0（マイナスにならないよう）」とする。
-        // ※正確にやるなら、各PostのtargetUsers/Committeesを展開して母数を出す必要があるが、
-        // Dashboardではパフォーマンスを優先し、全体数をベースにするか、詳細計算を省略するのが一般的。
-        // ここでは、一旦簡易計算にとどめる。
+        // 2. 投稿者本人を除いた母数
+        const adjustedTotal = totalMemberCount > 0 ? totalMemberCount - 1 : 0;
 
-        // もし閲覧制限があるなら、未読数は「ターゲット数 - 既読数」になるべきだが、
-        // ここでは「全体周知」が多いと仮定して totalMemberCount を使う。
-        const unread = totalMemberCount - readCount;
-        return unread > 0 ? unread : 0;
+        // 3. 未読数
+        const unreadCount = adjustedTotal - readCount;
+
+        return {
+            readCount,
+            totalUsers: adjustedTotal,
+            unreadCount: unreadCount > 0 ? unreadCount : 0
+        };
     };
 
     // フィルタリングロジック
@@ -272,14 +271,18 @@ export default function DashboardPage() {
                                         条件に一致する投稿はありません
                                     </div>
                                 ) : (
-                                    filteredPosts.map(post => (
-                                        <PostCard
-                                            key={post.id}
-                                            post={post}
-                                            unreadCount={getUnreadCount(post)}
-                                            totalUsers={totalMemberCount}
-                                        />
-                                    ))
+                                    filteredPosts.map(post => {
+                                        const stats = getPostStats(post);
+                                        return (
+                                            <PostCard
+                                                key={post.id}
+                                                post={post}
+                                                readCount={stats.readCount}
+                                                unreadCount={stats.unreadCount}
+                                                totalUsers={stats.totalUsers}
+                                            />
+                                        );
+                                    })
                                 )}
                             </div>
                         </div>

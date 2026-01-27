@@ -51,6 +51,7 @@ export default function NewPostPage() {
             const { data: membersData } = await supabase
                 .from('jc_members')
                 .select('id, name')
+                .eq('is_profile_linked', true)
                 .order('name');
 
             if (membersData) {

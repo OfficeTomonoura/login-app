@@ -1,20 +1,39 @@
 .container {
     display: flex;
     justify-content: center;
-    align-items: flex-start;
-    padding: 1rem 1rem 1rem;
-    background: linear-gradient(135deg, hsl(var(--primary) / 0.1), hsl(var(--secondary) / 0.1));
+    align-items: center;
+    min-height: 100vh;
+    width: 100%;
+    padding: 2rem;
+    background: radial-gradient(circle at top left, hsl(var(--primary) / 0.15), transparent),
+        radial-gradient(circle at bottom right, hsl(var(--secondary) / 0.15), transparent);
+    position: relative;
+    overflow: hidden;
 }
 
 .card {
     width: 100%;
     max-width: 420px;
-    background: hsl(var(--card));
-    border-radius: var(--radius-xl);
-    padding: 2.5rem;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-    border: 1px solid hsl(var(--border) / 0.5);
-    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 28px;
+    padding: 3rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    z-index: 1;
+    animation: fadeInScale 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
 }
 
 .header {

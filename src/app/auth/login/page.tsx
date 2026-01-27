@@ -6,7 +6,11 @@ import { useAuth } from '@/contexts/SupabaseAuthContext';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import styles from './login.module.css';
+import { LoadingOverlay } from '@/components/ui/LoadingSpinner';
 
+/**
+ * ログインページコンポーネント
+ */
 export default function LoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -21,7 +25,13 @@ export default function LoginPage() {
         setIsLoading(true);
 
         try {
-            const { error, user } = await login(email, password);
+            // ログイン処理と最低1秒の待機を並列実行
+            const [loginResult] = await Promise.all([
+                login(email, password),
+                new Promise(resolve => setTimeout(resolve, 1000))
+            ]);
+
+            const { error, user } = loginResult as { error: any; user?: any };
 
             if (error) {
                 console.error('Login failed:', error);
@@ -37,6 +47,7 @@ export default function LoginPage() {
                 } else {
                     router.push('/dashboard');
                 }
+                // 画面遷移中もisLoadingを維持（AuthGuardなどの読み込みが始まるまで）
             } else {
                 setError('プロフィール情報の取得に失敗しました。通信環境を確認して再度お試しください。');
                 setIsLoading(false);
@@ -50,6 +61,7 @@ export default function LoginPage() {
 
     return (
         <div className={styles.container}>
+            {isLoading && <LoadingOverlay />}
             <div className={styles.card}>
                 <div className={styles.header}>
                     <h1 className={styles.title}>25JC</h1>

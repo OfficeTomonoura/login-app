@@ -78,11 +78,7 @@ export default function LoginPage() {
                     </Button>
                 </form>
 
-                <div className={styles.hint}>
-                    <p>💡 テストアカウント:</p>
-                    <p>Email: <code>test-user@example.com</code></p>
-                    <p>Password: <code>password123</code></p>
-                </div>
+
             </div>
         </div>
     );

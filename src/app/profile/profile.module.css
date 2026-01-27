@@ -71,31 +71,62 @@
 }
 
 .sectionTitle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
     color: white;
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 2.5rem 0 1.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.sectionTitle::before {
+    content: '';
+    width: 3px;
+    height: 1rem;
+    background: #3b82f6;
+    border-radius: 2px;
 }
 
 .grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 16px;
+    gap: 20px;
+}
+
+@media (max-width: 640px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* Committees List */
-.committeeList {
+.committeeSection {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 1.25rem;
+}
+
+.committeeEditRow {
+    position: relative;
+    background: rgba(255, 255, 255, 0.02);
+    padding: 1.25rem;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    transition: all 0.2s;
+}
+
+.committeeEditRow:hover {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.1);
 }
 
 .committeeItem {
     background: rgba(0, 0, 0, 0.2);
-    padding: 12px 16px;
-    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    border-radius: 12px;
     border: 1px solid rgba(255, 255, 255, 0.05);
     display: flex;
     justify-content: space-between;
@@ -103,60 +134,136 @@
 }
 
 .committeeName {
-    color: white;
-    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 600;
+    font-size: 0.95rem;
 }
 
 .committeeRole {
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 0.9rem;
-    background: rgba(255, 255, 255, 0.1);
-    padding: 2px 8px;
-    border-radius: 4px;
+    color: #3b82f6;
+    font-size: 0.85rem;
+    font-weight: 700;
+    background: rgba(59, 130, 246, 0.1);
+    padding: 0.25rem 0.75rem;
+    border-radius: 6px;
 }
 
-.actions {
+@media (max-width: 640px) {
+    .container {
+        padding: 12px;
+        margin: 20px auto;
+    }
+
+    .card {
+        padding: 20px 16px;
+        border-radius: 16px;
+    }
+
+    .committeeEditRow {
+        padding: 1rem;
+    }
+}
+
+.committeeGrid {
+    display: grid;
+    grid-template-columns: 90px 1fr 1fr;
+    gap: 1rem;
+}
+
+@media (max-width: 640px) {
+    .committeeGrid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+}
+
+.inputGroup {
     display: flex;
-    gap: 16px;
-    margin-top: 24px;
-    justify-content: flex-end;
+    flex-direction: column;
+    gap: 0.5rem;
 }
 
-.message {
-    padding: 12px;
+.label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.nativeInput,
+.nativeSelect {
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 8px;
-    margin-bottom: 24px;
-    font-size: 14px;
-    text-align: center;
-}
-
-.success {
-    background-color: rgba(16, 185, 129, 0.2);
-    color: #34d399;
-    border: 1px solid rgba(16, 185, 129, 0.3);
-}
-
-.error {
-    background-color: rgba(239, 68, 68, 0.2);
-    color: #f87171;
-    border: 1px solid rgba(239, 68, 68, 0.3);
-}
-
-.logoutSection {
-    margin-top: 40px;
-    display: flex;
-    justify-content: center;
-}
-
-.logoutButton {
-    color: #ef4444 !important;
-    border: 1px solid rgba(239, 68, 68, 0.3) !important;
-    background: rgba(239, 68, 68, 0.1) !important;
-    width: 200px;
+    padding: 0.75rem;
+    color: white;
+    font-size: 0.9rem;
+    outline: none;
     transition: all 0.2s;
 }
 
-.logoutButton:hover {
-    background: rgba(239, 68, 68, 0.2) !important;
-    transform: translateY(-2px);
+.nativeInput:focus,
+.nativeSelect:focus {
+    border-color: #3b82f6;
+    background: rgba(0, 0, 0, 0.35);
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+}
+
+.removeBtn {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 28px;
+    height: 28px;
+    background: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s;
+    z-index: 2;
+}
+
+.removeBtn:hover {
+    transform: scale(1.1) rotate(90deg);
+    background: #dc2626;
+}
+
+.addCommitteeBtn {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px dashed rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    color: rgba(255, 255, 255, 0.6);
+    padding: 1.25rem;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    transition: all 0.2s;
+    margin-top: 0.5rem;
+}
+
+.addCommitteeBtn:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.3);
+    color: white;
+}
+
+.noDataText {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 0.9rem;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 12px;
+    border: 1px dashed rgba(255, 255, 255, 0.1);
 }

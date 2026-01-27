@@ -1,10 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/SupabaseAuthContext';
 import AuthGuard from '@/components/AuthGuard';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
+import { Committee } from '@/types/post';
 import Avatar from '@/components/ui/Avatar';
 import ImageCropModal from '@/components/ImageCropModal';
 import DatePicker from '@/components/ui/DatePicker';
@@ -30,7 +32,11 @@ export default function ProfilePage() {
         companyName: '',
         birthDate: '',
         avatarUrl: '',
+        committees: [] as Committee[],
     });
+
+    const [masterCommittees, setMasterCommittees] = useState<string[]>([]);
+    const [masterRoles, setMasterRoles] = useState<string[]>([]);
 
     // ユーザーデータがロードされたらフォームにセット
     useEffect(() => {
@@ -46,9 +52,21 @@ export default function ProfilePage() {
                 companyName: user.companyName || '',
                 birthDate: user.birthDate || '',
                 avatarUrl: user.avatarUrl || '',
+                committees: user.committees || [],
             });
         }
     }, [user]);
+
+    // マスターデータの取得
+    useEffect(() => {
+        const fetchMasterData = async () => {
+            const { data: cData } = await supabase.from('master_committees').select('name').eq('year', 2026).order('name');
+            const { data: rData } = await supabase.from('master_roles').select('name').order('display_order');
+            setMasterCommittees(cData?.map(c => c.name) || []);
+            setMasterRoles(rData?.map(r => r.name) || []);
+        };
+        fetchMasterData();
+    }, []);
 
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -135,8 +153,36 @@ export default function ProfilePage() {
                 companyName: user.companyName || '',
                 birthDate: user.birthDate || '',
                 avatarUrl: user.avatarUrl || '',
+                committees: user.committees || [],
             });
         }
+    };
+
+    const handleAddCommittee = () => {
+        const newCommittee: Committee = {
+            year: 2026,
+            name: masterCommittees[0] || '',
+            role: masterRoles[0] || '正会員'
+        };
+        setFormData(prev => ({
+            ...prev,
+            committees: [...prev.committees, newCommittee]
+        }));
+    };
+
+    const handleRemoveCommittee = (index: number) => {
+        setFormData(prev => ({
+            ...prev,
+            committees: prev.committees.filter((_, i) => i !== index)
+        }));
+    };
+
+    const handleCommitteeChange = (index: number, field: keyof Committee, value: any) => {
+        setFormData(prev => {
+            const newCommittees = [...prev.committees];
+            newCommittees[index] = { ...newCommittees[index], [field]: value };
+            return { ...prev, committees: newCommittees };
+        });
     };
 
     return (
@@ -259,21 +305,81 @@ export default function ProfilePage() {
                             />
                         )}
 
-                        {user?.committees && user.committees.length > 0 && (
-                            <div>
-                                <div className={styles.sectionTitle}>所属委員会</div>
-                                <div className={styles.committeeList}>
-                                    {user.committees.map((c, i) => (
-                                        <div key={i} className={styles.committeeItem}>
-                                            <span className={styles.committeeName}>
-                                                {c.year ? `${c.year}年度 ` : ''}{c.name}
-                                            </span>
-                                            <span className={styles.committeeRole}>{c.role}</span>
+                        <div className={styles.sectionTitle}>所属委員会</div>
+                        <div className={styles.committeeSection}>
+                            {formData.committees.map((c, i) => (
+                                <div key={i} className={styles.committeeEditRow}>
+                                    <div className={styles.committeeGrid}>
+                                        <div className={styles.inputGroup}>
+                                            <label className={styles.label}>年度</label>
+                                            <input
+                                                type="number"
+                                                value={c.year}
+                                                onChange={(e) => handleCommitteeChange(i, 'year', Number(e.target.value))}
+                                                disabled={!isEditing}
+                                                className={styles.nativeInput}
+                                            />
                                         </div>
-                                    ))}
+                                        <div className={styles.inputGroup}>
+                                            <label className={styles.label}>委員会・役割</label>
+                                            <select
+                                                value={c.name}
+                                                onChange={(e) => handleCommitteeChange(i, 'name', e.target.value)}
+                                                disabled={!isEditing}
+                                                className={styles.nativeSelect}
+                                            >
+                                                {masterCommittees.map(name => (
+                                                    <option key={name} value={name}>{name}</option>
+                                                ))}
+                                                {!masterCommittees.includes(c.name) && (
+                                                    <option value={c.name}>{c.name}</option>
+                                                )}
+                                            </select>
+                                        </div>
+                                        <div className={styles.inputGroup}>
+                                            <label className={styles.label}>役職</label>
+                                            <select
+                                                value={c.role}
+                                                onChange={(e) => handleCommitteeChange(i, 'role', e.target.value)}
+                                                disabled={!isEditing}
+                                                className={styles.nativeSelect}
+                                            >
+                                                {masterRoles.map(role => (
+                                                    <option key={role} value={role}>{role}</option>
+                                                ))}
+                                                {!masterRoles.includes(c.role) && (
+                                                    <option value={c.role}>{c.role}</option>
+                                                )}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    {isEditing && (
+                                        <button
+                                            type="button"
+                                            className={styles.removeBtn}
+                                            onClick={() => handleRemoveCommittee(i)}
+                                            title="削除"
+                                        >
+                                            ✕
+                                        </button>
+                                    )}
                                 </div>
-                            </div>
-                        )}
+                            ))}
+
+                            {isEditing && (
+                                <button
+                                    type="button"
+                                    className={styles.addCommitteeBtn}
+                                    onClick={handleAddCommittee}
+                                >
+                                    <span>＋</span> 所属委員会・組織を追加
+                                </button>
+                            )}
+
+                            {!isEditing && formData.committees.length === 0 && (
+                                <p className={styles.noDataText}>所属情報がありません</p>
+                            )}
+                        </div>
 
                         <div className={styles.actions}>
                             {isEditing ? (

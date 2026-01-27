@@ -190,7 +190,13 @@ export default function NewPostPage() {
                         </section>
 
                         {/* 2. 宛先指定セクション */}
-                        <section className={styles.section}>
+                        <section className={`${styles.section} ${styles.underAdjustment}`}>
+                            <div className={styles.adjustmentOverlay}>
+                                <div className={styles.adjustmentContent}>
+                                    <div className={styles.adjustmentBadge}>現在 機能調整中</div>
+                                    <span className={styles.adjustmentSubText}>今後のアップデートをお待ちください</span>
+                                </div>
+                            </div>
                             <div className={styles.sectionHeader}>
                                 <span className={styles.sectionIcon}>🎯</span>
                                 <h2 className={styles.sectionTitle}>宛先指定（任意）</h2>

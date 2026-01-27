@@ -104,7 +104,7 @@ export async function POST(request: Request) {
                                     layout: 'vertical',
                                     margin: 'lg',
                                     spacing: 'sm',
-                                    contents: [
+                                    contents: ([
                                         isParty && shopName ? {
                                             type: 'box',
                                             layout: 'baseline',
@@ -126,7 +126,7 @@ export async function POST(request: Request) {
                                                     flex: 5
                                                 }
                                             ]
-                                        } : { type: 'spacer', size: 'xs' },
+                                        } : null,
                                         isParty && date ? {
                                             type: 'box',
                                             layout: 'baseline',
@@ -148,7 +148,7 @@ export async function POST(request: Request) {
                                                     flex: 5
                                                 }
                                             ]
-                                        } : { type: 'spacer', size: 'xs' },
+                                        } : null,
                                         isParty && committeeName ? {
                                             type: 'box',
                                             layout: 'baseline',
@@ -170,7 +170,7 @@ export async function POST(request: Request) {
                                                     flex: 5
                                                 }
                                             ]
-                                        } : { type: 'spacer', size: 'xs' },
+                                        } : null,
                                         {
                                             type: 'box',
                                             layout: 'baseline',
@@ -193,7 +193,7 @@ export async function POST(request: Request) {
                                                 }
                                             ]
                                         }
-                                    ]
+                                    ] as any[]).filter(Boolean)
                                 }
                             ]
                         },

@@ -104,7 +104,7 @@ export default function NewPostPage() {
             await new Promise(resolve => setTimeout(resolve, 800));
 
             // Supabaseへ保存
-            const { error } = await supabase
+            const { data: insertedData, error } = await supabase
                 .from('posts')
                 .insert([
                     {
@@ -120,15 +120,18 @@ export default function NewPostPage() {
                         target_users: formData.targetUsers,
                         target_committees: formData.targetCommittees,
                     }
-                ]);
+                ])
+                .select('id')
+                .single();
 
             if (error) throw error;
 
-            // LINE通知送信 (宛先情報を追加)
-            fetch('/api/send-line', {
+            // LINE通知送信
+            const lineRes = await fetch('/api/send-line', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
+                    id: insertedData?.id,
                     title: formData.title,
                     content: formData.content,
                     type: formData.type,
@@ -136,7 +139,12 @@ export default function NewPostPage() {
                     targetUsers: formData.targetUsers,
                     targetCommittees: formData.targetCommittees,
                 }),
-            }).catch(err => console.error('Notification failed:', err));
+            });
+
+            if (!lineRes.ok) {
+                const errData = await lineRes.json();
+                console.error('LINE notification failed:', errData);
+            }
 
             router.push('/apps/board');
             router.refresh();
@@ -258,6 +266,56 @@ export default function NewPostPage() {
                                         required
                                     />
                                 </div>
+                            </div>
+                        </section>
+
+                        {/* LINE Preview Section */}
+                        <section className={styles.section}>
+                            <div className={styles.sectionHeader}>
+                                <span className={styles.sectionIcon}>📱</span>
+                                <h2 className={styles.sectionTitle}>LINE通知プレビュー</h2>
+                            </div>
+                            <div className={styles.previewSection}>
+                                <div className={styles.previewTitle}>
+                                    <span>●</span> LINE通知イメージ
+                                </div>
+
+                                {(() => {
+                                    const typeColors: Record<string, string> = {
+                                        report: '#3498db',
+                                        request: '#e74c3c',
+                                        notice: '#f39c12'
+                                    };
+                                    const typeLabel = formData.type === 'report' ? '報告' : formData.type === 'request' ? '依頼' : 'お知らせ';
+                                    const color = typeColors[formData.type] || '#2ecc71';
+
+                                    return (
+                                        <div className={styles.lineBubble}>
+                                            <div className={styles.lineHeader} style={{ backgroundColor: color }}>
+                                                新着: {typeLabel}
+                                            </div>
+                                            <div className={styles.lineBody}>
+                                                <div className={styles.linePostTitle}>{formData.title || 'タイトル未入力'}</div>
+                                                <div className={styles.lineMeta}>
+                                                    <div className={styles.lineMetaLabel}>投稿者</div>
+                                                    <div className={styles.lineMetaValue}>{user?.name || 'ユーザー'}</div>
+                                                </div>
+                                                <div className={styles.lineContent}>
+                                                    {formData.content ? (
+                                                        formData.content.substring(0, 100) + (formData.content.length > 100 ? '...' : '')
+                                                    ) : (
+                                                        '本文がここに入ります。'
+                                                    )}
+                                                </div>
+                                            </div>
+                                            <div className={styles.lineFooter}>
+                                                <div className={styles.lineButton} style={{ backgroundColor: color }}>
+                                                    詳細を確認する
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                })()}
                             </div>
                         </section>
 

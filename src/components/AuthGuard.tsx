@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/SupabaseAuthContext';
 
-import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import LoadingSpinner, { LoadingScreen } from '@/components/ui/LoadingSpinner';
 
 export default function AuthGuard({ children }: { children: React.ReactNode }) {
     const { user, isLoading } = useAuth();
@@ -24,7 +24,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
 
     // ハイドレーションエラー防止のため、マウント前または読込中はスピナーを表示
     if (!mounted || isLoading) {
-        return <LoadingSpinner fullScreen />;
+        return <LoadingScreen />;
     }
 
     if (!user) {

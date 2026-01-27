@@ -102,28 +102,6 @@ export default function DashboardLauncher() {
                     <span className={styles.appName}>懇親会ログ</span>
                 </Link>
 
-                {/* 以下ダミーアプリ */}
-                <div className={styles.appItem} onClick={() => alert('準備中です')}>
-                    <div className={`${styles.iconWrapper} ${styles.calendar}`}>
-                        📅
-                    </div>
-                    <span className={styles.appName}>カレンダー</span>
-                </div>
-
-                <div className={styles.appItem} onClick={() => alert('準備中です')}>
-                    <div className={`${styles.iconWrapper} ${styles.expenses}`}>
-                        💰
-                    </div>
-                    <span className={styles.appName}>経費精算</span>
-                </div>
-
-                <div className={styles.appItem} onClick={() => alert('サポートへお問い合わせください')}>
-                    <div className={`${styles.iconWrapper} ${styles.help}`}>
-                        ❓
-                    </div>
-                    <span className={styles.appName}>ヘルプ</span>
-                </div>
-
                 {/* マスター管理 */}
                 <Link href="/apps/master" className={styles.appItem}>
                     <div className={`${styles.iconWrapper} ${styles.master}`} style={{ background: 'linear-gradient(135deg, #4b5563 0%, #1f2937 100%)' }}>

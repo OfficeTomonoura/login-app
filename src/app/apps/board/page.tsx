@@ -18,6 +18,7 @@ export default function DashboardPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [totalMemberCount, setTotalMemberCount] = useState(0);
+    const [committees, setCommittees] = useState<{ id: string; name: string }[]>([]);
 
     // フィルター状態
     const [filterUnread, setFilterUnread] = useState(false);
@@ -25,6 +26,7 @@ export default function DashboardPage() {
     const [filterFavorite, setFilterFavorite] = useState(false);
     const [filterType, setFilterType] = useState<'all' | 'report' | 'request' | 'notice'>('all');
     const [filterAuthor, setFilterAuthor] = useState<string | 'all'>('all');
+    const [filterCommittee, setFilterCommittee] = useState<string | 'all'>('all');
 
     useEffect(() => {
         const fetchData = async () => {
@@ -36,20 +38,27 @@ export default function DashboardPage() {
                     .select('*')
                     .order('created_at', { ascending: false });
 
-                if (postsError) {
-                    throw postsError;
-                }
+                if (postsError) throw postsError;
 
-                // 2. 全メンバー数取得 (アカウント連携済みのみ)
+                // 2. 全メンバー数取得
                 const { count, error: countError } = await supabase
                     .from('jc_members')
                     .select('*', { count: 'exact', head: true })
                     .eq('is_profile_linked', true);
 
-                if (countError) {
-                    console.error('Error fetching member count:', countError);
-                } else if (count !== null) {
+                if (!countError && count !== null) {
                     setTotalMemberCount(count);
+                }
+
+                // 3. 委員会マスター取得
+                const { data: committeesData } = await supabase
+                    .from('master_committees')
+                    .select('id, name')
+                    .eq('year', 2026)
+                    .order('name');
+
+                if (committeesData) {
+                    setCommittees(committeesData);
                 }
 
                 if (postsData) {
@@ -103,26 +112,17 @@ export default function DashboardPage() {
 
     // フィルタリングロジック
     const filteredPosts = posts.filter(post => {
-        // --- 閲覧制限ロジック (宛先指定) ---
+        // --- 閲覧制限ロジック ---
         if (user) {
             const hasTargetUsers = post.targetUsers && post.targetUsers.length > 0;
             const hasTargetCommittees = post.targetCommittees && post.targetCommittees.length > 0;
 
             if (hasTargetUsers || hasTargetCommittees) {
-                // 投稿者本人は常に閲覧可能
                 const isAuthor = post.authorId === user.id;
-
-                // 宛先ユーザーに含まれているか
                 const isTargetUser = post.targetUsers?.includes(user.id);
-
-                // 宛先委員会に含まれているか (ユーザーの所属委員会名と照合)
                 const userCommitteeNames = user.committees?.map(c => c.name) || [];
                 const isTargetCommittee = post.targetCommittees?.some(name => userCommitteeNames.includes(name));
-
-                // いずれにも該当しない場合は非表示
-                if (!isAuthor && !isTargetUser && !isTargetCommittee) {
-                    return false;
-                }
+                if (!isAuthor && !isTargetUser && !isTargetCommittee) return false;
             }
         }
 
@@ -147,13 +147,15 @@ export default function DashboardPage() {
             if (!isFavorited) return false;
         }
         // 種別
-        if (filterType !== 'all' && post.type !== filterType) {
-            return false;
-        }
+        if (filterType !== 'all' && post.type !== filterType) return false;
         // 投稿者
-        if (filterAuthor !== 'all' && post.authorId !== filterAuthor) {
-            return false;
+        if (filterAuthor !== 'all' && post.authorId !== filterAuthor) return false;
+
+        // 委員会フィルター
+        if (filterCommittee !== 'all') {
+            if (!post.targetCommittees?.includes(filterCommittee)) return false;
         }
+
         return true;
     });
 
@@ -162,10 +164,8 @@ export default function DashboardPage() {
         posts
             .filter(p => p.authorId && p.authorName) // IDと名前があるもの
             .reduce((map, p) => {
-                const name = p.authorName || 'Unknown';
-                if (!map.has(name)) {
-                    map.set(name, { id: p.authorId, name });
-                }
+                const name = p.authorName;
+                if (!map.has(name)) map.set(name, { id: p.authorId, name });
                 return map;
             }, new Map<string, { id: string; name: string }>())
             .values()
@@ -209,21 +209,24 @@ export default function DashboardPage() {
 
                                 <div className={styles.filterSeparator} />
 
-                                {/* 委員会フィルター (ダミー選択肢) */}
+                                {/* 委員会フィルター */}
                                 <div style={{ position: 'relative' }}>
                                     <select
                                         className={styles.hiddenSelect}
-                                        onChange={(e) => alert(`${e.target.value}での絞り込みは、メンバー機能実装後に有効になります`)}
-                                        value="all"
+                                        onChange={(e) => setFilterCommittee(e.target.value)}
+                                        value={filterCommittee}
                                         style={{ position: 'absolute', opacity: 0, width: '100%', height: '100%', cursor: 'pointer' }}
                                     >
                                         <option value="all">委員会: すべて</option>
-                                        <option value="somu">総務委員会</option>
-                                        <option value="koho">広報委員会</option>
-                                        <option value="kakudai">会員拡大委員会</option>
-                                        <option value="shinboku">親睦委員会</option>
+                                        {committees.map(c => (
+                                            <option key={c.id} value={c.name}>{c.name}</option>
+                                        ))}
                                     </select>
-                                    <FilterChip label="🤝 委員会" hasDropdown />
+                                    <FilterChip
+                                        label={`🤝 ${filterCommittee === 'all' ? '委員会' : filterCommittee}`}
+                                        isActive={filterCommittee !== 'all'}
+                                        hasDropdown
+                                    />
                                 </div>
 
                                 <div style={{ position: 'relative' }}>
@@ -237,7 +240,11 @@ export default function DashboardPage() {
                                         <option value="request">📕 依頼</option>
                                         <option value="notice">📢 お知らせ</option>
                                     </select>
-                                    <FilterChip label={`🏷️ ${filterType === 'all' ? '種別' : filterType}`} isActive={filterType !== 'all'} hasDropdown />
+                                    <FilterChip
+                                        label={`🏷️ ${filterType === 'all' ? '種別' : (filterType === 'report' ? '報告' : filterType === 'request' ? '依頼' : 'お知らせ')}`}
+                                        isActive={filterType !== 'all'}
+                                        hasDropdown
+                                    />
                                 </div>
 
                                 <div style={{ position: 'relative' }}>

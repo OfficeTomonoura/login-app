@@ -15,6 +15,7 @@ import styles from './post.module.css';
 
 interface DBMember {
     id: string;
+    profile_id: string; // アカウント連携している場合のプロフィールID
     name: string;
     committees: any[]; // JSONB
     avatar_url?: string;
@@ -58,7 +59,7 @@ export default function PostDetailPage() {
                 // 2. メンバーデータの取得
                 const { data: membersData, error: membersError } = await supabase
                     .from('jc_members')
-                    .select('id, name, committees, avatar_url')
+                    .select('id, profile_id, name, committees, avatar_url')
                     .eq('is_profile_linked', true)
                     .order('name');
 
@@ -87,8 +88,6 @@ export default function PostDetailPage() {
                         targetCommittees: postData.target_committees || [],
                     };
                     setPost(formattedPost);
-                } else {
-                    console.warn('No post data returned for ID:', params.id);
                 }
                 setLoading(false);
             } catch (err) {
@@ -110,8 +109,7 @@ export default function PostDetailPage() {
 
         if (type === 'acknowledged') {
             if (existingReaction) {
-                // すでに何らかのリアクション（既読 or 完了）があるなら、すべて削除（既読解除）
-                // これにより「既読（了解）を解除するとすべて白紙に戻る」という仕様を実現
+                // すでに何らかのリアクションがあるなら、すべて削除（既読解除）
                 updatedReactions = post.reactions.filter(r => r.userId !== user.id);
             } else {
                 // 未選択なら既読にする
@@ -152,14 +150,12 @@ export default function PostDetailPage() {
                     newReaction
                 ];
             } else {
-                // 未了解の状態で完了は押せない（UIでガードするが念のため）
                 return;
             }
         } else {
             updatedReactions = post.reactions;
         }
 
-        // DB更新
         try {
             const { error } = await supabase
                 .from('posts')
@@ -168,7 +164,6 @@ export default function PostDetailPage() {
 
             if (error) throw error;
 
-            // ローカルステート更新
             const updatedPost = { ...post, reactions: updatedReactions };
             setPost(updatedPost);
         } catch (error) {
@@ -189,26 +184,14 @@ export default function PostDetailPage() {
             ? post.favorites.filter(id => id !== user.id)
             : [...post.favorites, user.id || ''];
 
-        // DB更新
         try {
             const { error } = await supabase
                 .from('posts')
                 .update({ favorites: updatedFavorites })
                 .eq('id', post.id);
 
-            if (error) {
-                console.error('Supabase error details:', error);
+            if (error) throw error;
 
-                // データベースにfavoritesカラムがない場合のエラー
-                if (error.message?.includes('column') && error.message?.includes('favorites')) {
-                    alert('お気に入り機能を使用するには、データベースの設定が必要です。\n\n以下のSQLをSupabaseで実行してください：\n\nALTER TABLE posts ADD COLUMN favorites jsonb DEFAULT \'[]\'::jsonb;');
-                } else {
-                    alert(`更新に失敗しました: ${error.message}`);
-                }
-                throw error;
-            }
-
-            // ローカルステート更新
             const updatedPost = { ...post, favorites: updatedFavorites };
             setPost(updatedPost);
         } catch (error) {
@@ -264,10 +247,7 @@ export default function PostDetailPage() {
         );
     }
 
-    // 自分はこの記事にリアクション済みか？
-    const myReaction = user ? post.reactions.find(r => r.userId === user.id) : undefined;
-
-    // 既読・未読ユーザーの集計 (宛先に基づいてフィルタリング)
+    // 既読・未読ユーザーの集計
     const getTargetAudience = () => {
         const hasTargetUsers = post.targetUsers && post.targetUsers.length > 0;
         const hasTargetCommittees = post.targetCommittees && post.targetCommittees.length > 0;
@@ -275,14 +255,12 @@ export default function PostDetailPage() {
         if (!hasTargetUsers && !hasTargetCommittees) return members;
 
         return members.filter(u => {
-            if (u.id === post.authorId) return true;
-            if (post.targetUsers?.includes(u.id)) return true;
+            // 注意: post.authorId や targetUsers は profile_id (auth.uid) と比較する必要がある
+            if (u.profile_id === post.authorId) return true;
+            if (post.targetUsers?.includes(u.profile_id)) return true;
 
-            // 委員会のJSONBパースが必要な場合はここで行う。
-            // 簡易的に committees に配列が入っていると仮定してチェック。
-            // JSONB { name: "...", ... } の配列を想定
             const uCommitteeNames = Array.isArray(u.committees)
-                ? u.committees.map((c: any) => c.name || c) // 文字列のみの場合とオブジェクトの場合に対応
+                ? u.committees.map((c: any) => c.name || c)
                 : [];
 
             if (post.targetCommittees?.some(name => uCommitteeNames.includes(name))) return true;
@@ -292,8 +270,11 @@ export default function PostDetailPage() {
 
     const targetAudience = getTargetAudience();
     const readUserIds = post.reactions.map(r => r.userId);
-    const readUsers = targetAudience.filter(u => readUserIds.includes(u.id));
-    const unreadUsers = targetAudience.filter(u => !readUserIds.includes(u.id));
+    const readUsers = targetAudience.filter(u => readUserIds.includes(u.profile_id));
+    const unreadUsers = targetAudience.filter(u => !readUserIds.includes(u.profile_id));
+
+    // 自分はこの記事にリアクション済みか？ (user.id = profile_id)
+    const myReaction = user ? post.reactions.find(r => r.userId === user.id) : undefined;
 
     // 今表示するリスト
     const displayUsers = activeTab === 'read' ? readUsers : unreadUsers;
@@ -418,7 +399,8 @@ export default function PostDetailPage() {
                             </div>
                         ) : (
                             displayUsers.map(u => {
-                                const reaction = post.reactions.find(r => r.userId === u.id);
+                                // ここでも profile_id を使ってリアクションを検索
+                                const reaction = post.reactions.find(r => r.userId === u.profile_id);
                                 return (
                                     <div key={u.id} className={styles.userRow}>
                                         <div className={styles.userInfo}>

@@ -278,3 +278,28 @@
     border-radius: 12px;
     border: 1px dashed rgba(255, 255, 255, 0.1);
 }
+
+.logoutSection {
+    margin-top: 4rem;
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.logoutButton {
+    color: #ef4444 !important;
+    border: 1px solid rgba(239, 68, 68, 0.2) !important;
+    background: rgba(239, 68, 68, 0.05) !important;
+    padding: 0.75rem 2.5rem !important;
+    border-radius: 12px !important;
+    font-weight: 700 !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.logoutButton:hover {
+    background: rgba(239, 68, 68, 0.15) !important;
+    border-color: rgba(239, 68, 68, 0.5) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px -10px rgba(239, 68, 68, 0.3);
+}

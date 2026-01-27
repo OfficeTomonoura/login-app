@@ -66,7 +66,8 @@
 }
 
 .activeTab {
-    color: var(--primary) !important;
+    color: hsl(var(--primary)) !important;
+    text-shadow: 0 0 8px hsla(var(--primary), 0.3);
 }
 
 .activeTab::after {
@@ -75,9 +76,23 @@
     bottom: -1px;
     left: 0;
     right: 0;
-    height: 2px;
-    background: var(--primary);
-    box-shadow: 0 0 10px var(--primary);
+    height: 3px;
+    background: hsl(var(--primary));
+    box-shadow: 0 0 12px hsl(var(--primary));
+    border-radius: 99px;
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        transform: scaleX(0.5);
+        opacity: 0;
+    }
+
+    to {
+        transform: scaleX(1);
+        opacity: 1;
+    }
 }
 
 .contentCard {

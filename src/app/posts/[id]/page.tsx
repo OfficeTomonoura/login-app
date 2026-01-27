@@ -252,11 +252,12 @@ export default function PostDetailPage() {
         const hasTargetUsers = post.targetUsers && post.targetUsers.length > 0;
         const hasTargetCommittees = post.targetCommittees && post.targetCommittees.length > 0;
 
-        if (!hasTargetUsers && !hasTargetCommittees) return members;
+        // 投稿者本人は確認対象リストに含めない
+        const membersExcludingAuthor = members.filter(u => u.profile_id !== post.authorId);
 
-        return members.filter(u => {
-            // 注意: post.authorId や targetUsers は profile_id (auth.uid) と比較する必要がある
-            if (u.profile_id === post.authorId) return true;
+        if (!hasTargetUsers && !hasTargetCommittees) return membersExcludingAuthor;
+
+        return membersExcludingAuthor.filter(u => {
             if (post.targetUsers?.includes(u.profile_id)) return true;
 
             const uCommitteeNames = Array.isArray(u.committees)

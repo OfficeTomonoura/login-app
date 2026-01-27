@@ -222,30 +222,33 @@ export async function POST(request: Request) {
         };
 
         // 5. LINE APIへの送信 (通常はBroadcast、メンテナンス中は限定送信)
-        const isMaintenance = process.env.NEXT_PUBLIC_MAINTENANCE_MODE === 'true';
+        const rawMaint = process.env.NEXT_PUBLIC_MAINTENANCE_MODE;
+        const isMaintenance = (rawMaint || '').trim() === 'true';
         const recipientsStr = process.env.MAINTENANCE_LOG_RECIPIENTS;
         const recipients = recipientsStr ? recipientsStr.split(',').map(s => s.trim()).filter(Boolean) : [];
+
+        console.log(`[LINE API] RAW_MAINT: "${rawMaint}", IS_MAINT: ${isMaintenance}, RECIP_COUNT: ${recipients.length}`);
 
         let apiUrl = 'https://api.line.me/v2/bot/message/broadcast';
         let body: any = { messages: message.messages };
 
         if (isMaintenance) {
             if (recipients.length > 0) {
-                console.log(`[LINE API] Maintenance Mode: Sending to specific recipients (${recipients.length} users)...`);
+                console.log(`[LINE API] FINAL_TARGET: Multicast (${recipients.length} users)`);
                 apiUrl = 'https://api.line.me/v2/bot/message/multicast';
                 body = {
                     to: recipients,
                     messages: message.messages
                 };
             } else {
-                console.warn('[LINE API] Maintenance Mode: No recipients defined. Skipping notification to avoid accidental broadcast.');
+                console.warn('[LINE API] FINAL_TARGET: SKIP (Maintenance ON but no recipients)');
                 return NextResponse.json({
                     success: true,
                     message: 'メンテナンスモードのため送信をスキップしました（受信者が設定されていません）。'
                 });
             }
         } else {
-            console.log('[LINE API] Standard Mode: Sending Broadcast to all users...');
+            console.log('[LINE API] FINAL_TARGET: Broadcast (All users)');
         }
 
         const response = await fetch(apiUrl, {

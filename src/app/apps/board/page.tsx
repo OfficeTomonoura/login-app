@@ -40,10 +40,11 @@ export default function DashboardPage() {
                     throw postsError;
                 }
 
-                // 2. 全メンバー数取得 (とりあえずcountのみ)
+                // 2. 全メンバー数取得 (アカウント連携済みのみ)
                 const { count, error: countError } = await supabase
                     .from('jc_members')
-                    .select('*', { count: 'exact', head: true });
+                    .select('*', { count: 'exact', head: true })
+                    .eq('is_profile_linked', true);
 
                 if (countError) {
                     console.error('Error fetching member count:', countError);

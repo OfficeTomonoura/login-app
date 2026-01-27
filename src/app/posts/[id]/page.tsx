@@ -59,6 +59,7 @@ export default function PostDetailPage() {
                 const { data: membersData, error: membersError } = await supabase
                     .from('jc_members')
                     .select('id, name, committees, avatar_url')
+                    .eq('is_profile_linked', true)
                     .order('name');
 
                 if (membersError) {

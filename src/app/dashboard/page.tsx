@@ -70,13 +70,7 @@ export default function DashboardLauncher() {
                     <span className={styles.appName}>掲示板</span>
                 </Link>
 
-                {/* 投稿ショートカット */}
-                <Link href="/posts/create" className={styles.appItem}>
-                    <div className={`${styles.iconWrapper} ${styles.post}`}>
-                        ✍️
-                    </div>
-                    <span className={styles.appName}>新規投稿</span>
-                </Link>
+
 
                 {/* メンバー名簿 */}
                 <Link href="/apps/members" className={styles.appItem}>

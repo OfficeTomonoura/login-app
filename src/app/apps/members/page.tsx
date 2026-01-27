@@ -9,6 +9,7 @@ import MemberCard from './components/MemberCard';
 import MemberFilters from './components/MemberFilters';
 import MemberDetailModal from './components/MemberDetailModal';
 import MemberCreateModal from './components/MemberCreateModal';
+import { LoadingScreen } from '@/components/ui/LoadingSpinner';
 
 export default function MembersPage() {
     const [members, setMembers] = useState<Member[]>([]);
@@ -152,9 +153,7 @@ export default function MembersPage() {
             />
 
             {isLoading ? (
-                <div style={{ textAlign: 'center', padding: '4rem' }}>
-                    Loading...
-                </div>
+                <LoadingScreen />
             ) : (
                 <div className={styles.grid}>
                     {filteredMembers.length > 0 ? (

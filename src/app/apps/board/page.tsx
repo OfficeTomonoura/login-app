@@ -9,7 +9,7 @@ import FilterChip from '@/components/ui/FilterChip';
 import PostCard from '@/components/PostCard';
 import { supabase } from '@/lib/supabase';
 import { Post } from '@/types/post';
-import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import { LoadingScreen } from '@/components/ui/LoadingSpinner';
 import styles from './dashboard.module.css';
 
 export default function DashboardPage() {
@@ -174,7 +174,7 @@ export default function DashboardPage() {
     return (
         <AuthGuard>
             <div className={styles.container}>
-                {loading && <LoadingSpinner />}
+                {loading && <LoadingScreen />}
                 {error && <div style={{ padding: 20, color: 'red', textAlign: 'center' }}>エラー: {error}</div>}
                 {!loading && !error && (
                     <main className={styles.main}>

@@ -12,7 +12,7 @@ export async function POST(request: Request) {
             : (id ? `${appUrl}/posts/${id}` : `${appUrl}/apps/board`);
 
         // デバッグログ
-        console.log('[LINE API] Attempting to send message (Broadcast)...');
+        console.log('[LINE API] Attempting to send message...');
         console.log(`[LINE API] Token present: ${!!token}`);
 
         if (!token) {
@@ -229,13 +229,21 @@ export async function POST(request: Request) {
         let apiUrl = 'https://api.line.me/v2/bot/message/broadcast';
         let body: any = { messages: message.messages };
 
-        if (isMaintenance && recipients.length > 0) {
-            console.log(`[LINE API] Maintenance Mode: Sending to specific recipients (${recipients.length} users)...`);
-            apiUrl = 'https://api.line.me/v2/bot/message/multicast';
-            body = {
-                to: recipients,
-                messages: message.messages
-            };
+        if (isMaintenance) {
+            if (recipients.length > 0) {
+                console.log(`[LINE API] Maintenance Mode: Sending to specific recipients (${recipients.length} users)...`);
+                apiUrl = 'https://api.line.me/v2/bot/message/multicast';
+                body = {
+                    to: recipients,
+                    messages: message.messages
+                };
+            } else {
+                console.warn('[LINE API] Maintenance Mode: No recipients defined. Skipping notification to avoid accidental broadcast.');
+                return NextResponse.json({
+                    success: true,
+                    message: 'メンテナンスモードのため送信をスキップしました（受信者が設定されていません）。'
+                });
+            }
         } else {
             console.log('[LINE API] Standard Mode: Sending Broadcast to all users...');
         }

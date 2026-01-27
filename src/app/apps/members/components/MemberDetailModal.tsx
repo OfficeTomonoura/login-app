@@ -51,40 +51,54 @@ export default function MemberDetailModal({ member, onClose, onMemberUpdated, co
                 <button className={styles.closeBtn} onClick={onClose}>×</button>
 
                 <div className={styles.header}>
-                    <div style={{ position: 'relative' }}>
-                        <Avatar
-                            src={member.avatarUrl || ''}
-                            alt={displayName}
-                            size="xl"
-                            fallback={displayName.charAt(0)}
-                        />
-                        {member.isProfileLinked && (
-                            <div style={{ position: 'absolute', bottom: 0, right: 0, filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.5))' }}>
-                                <JCBadge />
+                    <div className={styles.mainInfo}>
+                        <div className={styles.avatarSection}>
+                            <Avatar
+                                src={member.avatarUrl || ''}
+                                alt={displayName}
+                                size="xl"
+                                fallback={displayName.charAt(0)}
+                            />
+                            {member.isProfileLinked && (
+                                <div className={styles.badgeWrapper}>
+                                    <JCBadge />
+                                </div>
+                            )}
+                        </div>
+
+                        <div className={styles.nameSection}>
+                            <div className={styles.nameWrapper}>
+                                {member.lastName ? (
+                                    <ruby className={styles.rubyName}>
+                                        <span className={styles.lastName}>{member.lastName}</span>
+                                        <rt className={styles.furigana}>{member.lastNameKana}</rt>
+                                    </ruby>
+                                ) : (
+                                    <span className={styles.lastName}>{member.name}</span>
+                                )}
+                                <span className={styles.nameSpacer} />
+                                {member.firstName && (
+                                    <ruby className={styles.rubyName}>
+                                        <span className={styles.firstName}>{member.firstName}</span>
+                                        <rt className={styles.furigana}>{member.firstNameKana}</rt>
+                                    </ruby>
+                                )}
                             </div>
+                        </div>
+                    </div>
+
+                    <div className={styles.committeeList}>
+                        {member.committees && member.committees.length > 0 ? (
+                            member.committees.map((c, i) => (
+                                <div key={i} className={styles.committeeItem}>
+                                    <span className={styles.committeeName}>{c.name}</span>
+                                    <span className={styles.roleName}>{c.role}</span>
+                                </div>
+                            ))
+                        ) : (
+                            <span className={styles.noCommittee}>所属情報なし</span>
                         )}
                     </div>
-
-                    <h2 className={styles.name}>{displayName}</h2>
-                    {displayKana && <p className={styles.kana}>{displayKana}</p>}
-
-                    <div className={styles.roleTags}>
-                        {member.committees && member.committees.map((c, i) => (
-                            <span key={i} className={styles.roleTag}>
-                                {c.role} @ {c.name}
-                            </span>
-                        ))}
-                    </div>
-
-                    {/* 編集ボタン */}
-                    {canEdit && (
-                        <button
-                            className={styles.editBtn}
-                            onClick={() => setIsEditModalOpen(true)}
-                        >
-                            ✏️ 情報を編集
-                        </button>
-                    )}
                 </div>
 
                 <div className={styles.body}>
@@ -125,6 +139,18 @@ export default function MemberDetailModal({ member, onClose, onMemberUpdated, co
                             </div>
                         </div>
                     </div>
+
+                    {/* 編集ボタン (最下部) */}
+                    {canEdit && (
+                        <div className={styles.footer}>
+                            <button
+                                className={styles.editBtn}
+                                onClick={() => setIsEditModalOpen(true)}
+                            >
+                                ✏️ 情報を編集
+                            </button>
+                        </div>
+                    )}
                 </div>
 
                 {/* 編集モーダル */}

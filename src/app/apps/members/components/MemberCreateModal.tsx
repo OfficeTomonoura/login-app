@@ -1,13 +1,13 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import styles from './MemberCreateModal.module.css';
 import DatePicker from '@/components/ui/DatePicker';
 
 type Props = {
     onClose: () => void;
-    onMemberCreated: () => void; // 登録完了時にリストを更新するためのコールバック
+    onMemberCreated: () => void;
     committees: string[];
     roles: string[];
 };
@@ -24,9 +24,11 @@ export default function MemberCreateModal({ onClose, onMemberCreated, committees
         address: '',
         companyName: '',
         birthDate: '',
-        committee: '',
-        role: ''
     });
+
+    const [memberCommittees, setMemberCommittees] = useState<{ name: string; role: string; year: number }[]>([
+        { name: '', role: '', year: 2026 }
+    ]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -43,22 +45,35 @@ export default function MemberCreateModal({ onClose, onMemberCreated, committees
         }));
     };
 
+    const addCommitteeField = () => {
+        setMemberCommittees([...memberCommittees, { name: '', role: '', year: 2026 }]);
+    };
+
+    const removeCommitteeField = (index: number) => {
+        if (memberCommittees.length > 1) {
+            setMemberCommittees(memberCommittees.filter((_, i) => i !== index));
+        } else {
+            setMemberCommittees([{ name: '', role: '', year: 2026 }]);
+        }
+    };
+
+    const handleCommitteeChange = (index: number, field: 'name' | 'role', value: string) => {
+        const updated = [...memberCommittees];
+        updated[index][field] = value;
+        setMemberCommittees(updated);
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
 
         try {
-            // 委員会のJSONBデータの構築
-            const committeeData = formData.committee ? [{
-                name: formData.committee,
-                role: formData.role || '委員', // デフォルトは委員
-                year: 2026 // 仮置
-            }] : [];
+            const filteredCommittees = memberCommittees.filter(c => c.name !== '');
 
             const { error } = await supabase
                 .from('jc_members')
                 .insert({
-                    name: `${formData.lastName} ${formData.firstName}`, // 検索用フルネーム
+                    name: `${formData.lastName} ${formData.firstName}`,
                     last_name: formData.lastName,
                     first_name: formData.firstName,
                     last_name_kana: formData.lastNameKana,
@@ -68,8 +83,8 @@ export default function MemberCreateModal({ onClose, onMemberCreated, committees
                     address: formData.address || null,
                     company_name: formData.companyName || null,
                     birth_date: formData.birthDate || null,
-                    committees: committeeData,
-                    is_profile_linked: false // 手動登録なのでfalse
+                    committees: filteredCommittees,
+                    is_profile_linked: false
                 });
 
             if (error) throw error;
@@ -159,35 +174,58 @@ export default function MemberCreateModal({ onClose, onMemberCreated, committees
 
                     <div>
                         <h3 className={styles.sectionTitle}>所属情報</h3>
-                        <div className={styles.formRow}>
-                            <div className={styles.formGroup} style={{ flex: 1 }}>
-                                <label className={styles.label}>委員会</label>
-                                <select
-                                    name="committee"
-                                    className={styles.select}
-                                    value={formData.committee}
-                                    onChange={handleChange}
-                                >
-                                    <option value="">選択してください</option>
-                                    {committees.map(c => (
-                                        <option key={c} value={c}>{c}</option>
-                                    ))}
-                                </select>
+                        {memberCommittees.map((mc, index) => (
+                            <div key={index} className={styles.committeeRow}>
+                                <div className={styles.formRow}>
+                                    <div className={styles.formGroup} style={{ flex: 1 }}>
+                                        <label className={styles.label}>委員会</label>
+                                        <select
+                                            className={styles.select}
+                                            value={mc.name}
+                                            onChange={(e) => handleCommitteeChange(index, 'name', e.target.value)}
+                                        >
+                                            <option value="">選択してください</option>
+                                            {committees.map(c => (
+                                                <option key={c} value={c}>{c}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <div className={styles.formGroup} style={{ flex: 1 }}>
+                                        <label className={styles.label}>役職</label>
+                                        <select
+                                            className={styles.select}
+                                            value={mc.role}
+                                            onChange={(e) => handleCommitteeChange(index, 'role', e.target.value)}
+                                        >
+                                            <option value="">役職なし</option>
+                                            {roles.map(r => (
+                                                <option key={r} value={r}>{r}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    {memberCommittees.length > 1 && (
+                                        <div className={styles.removeAction}>
+                                            <button
+                                                type="button"
+                                                className={styles.removeBtnSmall}
+                                                onClick={() => removeCommitteeField(index)}
+                                                title="削除"
+                                            >
+                                                🗑️
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
-                            <div className={styles.formGroup} style={{ flex: 1 }}>
-                                <label className={styles.label}>役職</label>
-                                <select
-                                    name="role"
-                                    className={styles.select}
-                                    value={formData.role}
-                                    onChange={handleChange}
-                                >
-                                    <option value="">役職なし</option>
-                                    {roles.map(r => (
-                                        <option key={r} value={r}>{r}</option>
-                                    ))}
-                                </select>
-                            </div>
+                        ))}
+                        <div className={styles.addStepAction}>
+                            <button
+                                type="button"
+                                onClick={addCommitteeField}
+                                className={styles.addBtnSmall}
+                            >
+                                ＋ 委員会情報を追加
+                            </button>
                         </div>
                     </div>
 

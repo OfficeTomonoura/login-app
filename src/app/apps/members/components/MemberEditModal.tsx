@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Member } from '@/types/member';
-import styles from './MemberCreateModal.module.css'; // スタイルは共通利用
+import styles from './MemberCreateModal.module.css';
 import DatePicker from '@/components/ui/DatePicker';
 
 type Props = {
@@ -26,18 +26,19 @@ export default function MemberEditModal({ member, onClose, onMemberUpdated, comm
         address: member.address || '',
         companyName: member.companyName || '',
         birthDate: member.birthDate || '',
-        committee: '',
-        role: ''
     });
 
-    // 初期値としてメンバーの最初の委員会情報をセット
+    const [memberCommittees, setMemberCommittees] = useState<{ name: string; role: string; year: number }[]>([
+        { name: '', role: '', year: 2026 }
+    ]);
+
     useEffect(() => {
         if (member.committees && member.committees.length > 0) {
-            setFormData(prev => ({
-                ...prev,
-                committee: member.committees[0].name,
-                role: member.committees[0].role
-            }));
+            setMemberCommittees(member.committees.map(c => ({
+                name: c.name || '',
+                role: c.role || '',
+                year: c.year || 2026
+            })));
         }
     }, [member]);
 
@@ -56,18 +57,31 @@ export default function MemberEditModal({ member, onClose, onMemberUpdated, comm
         }));
     };
 
+    const addCommitteeField = () => {
+        setMemberCommittees([...memberCommittees, { name: '', role: '', year: 2026 }]);
+    };
+
+    const removeCommitteeField = (index: number) => {
+        if (memberCommittees.length > 1) {
+            setMemberCommittees(memberCommittees.filter((_, i) => i !== index));
+        } else {
+            setMemberCommittees([{ name: '', role: '', year: 2026 }]);
+        }
+    };
+
+    const handleCommitteeChange = (index: number, field: 'name' | 'role', value: string) => {
+        const updated = [...memberCommittees];
+        updated[index][field] = value;
+        setMemberCommittees(updated);
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
 
         try {
-            const committeeData = formData.committee ? [{
-                name: formData.committee,
-                role: formData.role || '委員',
-                year: 2026
-            }] : [];
+            const filteredCommittees = memberCommittees.filter(c => c.name !== '');
 
-            // Supabaseのupdate処理
             const { error } = await supabase
                 .from('jc_members')
                 .update({
@@ -81,10 +95,10 @@ export default function MemberEditModal({ member, onClose, onMemberUpdated, comm
                     address: formData.address || null,
                     company_name: formData.companyName || null,
                     birth_date: formData.birthDate || null,
-                    committees: committeeData,
+                    committees: filteredCommittees,
                     updated_at: new Date().toISOString()
                 })
-                .eq('id', member.id); // IDで対象を指定
+                .eq('id', member.id);
 
             if (error) throw error;
 
@@ -94,7 +108,6 @@ export default function MemberEditModal({ member, onClose, onMemberUpdated, comm
 
         } catch (error: any) {
             console.error('Error updating member:', error);
-            // 本人以外の連携済みメンバーを編集しようとした場合のエラーハンドリング
             if (member.isProfileLinked && error.code === '42501') {
                 alert('このメンバーはログインアカウントと連携されているため、本人以外は編集できません。');
             } else {
@@ -173,35 +186,58 @@ export default function MemberEditModal({ member, onClose, onMemberUpdated, comm
 
                     <div>
                         <h3 className={styles.sectionTitle}>所属情報</h3>
-                        <div className={styles.formRow}>
-                            <div className={styles.formGroup} style={{ flex: 1 }}>
-                                <label className={styles.label}>委員会</label>
-                                <select
-                                    name="committee"
-                                    className={styles.select}
-                                    value={formData.committee}
-                                    onChange={handleChange}
-                                >
-                                    <option value="">選択してください</option>
-                                    {committees.map(c => (
-                                        <option key={c} value={c}>{c}</option>
-                                    ))}
-                                </select>
+                        {memberCommittees.map((mc, index) => (
+                            <div key={index} className={styles.committeeRow}>
+                                <div className={styles.formRow}>
+                                    <div className={styles.formGroup} style={{ flex: 1 }}>
+                                        <label className={styles.label}>委員会</label>
+                                        <select
+                                            className={styles.select}
+                                            value={mc.name}
+                                            onChange={(e) => handleCommitteeChange(index, 'name', e.target.value)}
+                                        >
+                                            <option value="">選択してください</option>
+                                            {committees.map(c => (
+                                                <option key={c} value={c}>{c}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <div className={styles.formGroup} style={{ flex: 1 }}>
+                                        <label className={styles.label}>役職</label>
+                                        <select
+                                            className={styles.select}
+                                            value={mc.role}
+                                            onChange={(e) => handleCommitteeChange(index, 'role', e.target.value)}
+                                        >
+                                            <option value="">役職なし</option>
+                                            {roles.map(r => (
+                                                <option key={r} value={r}>{r}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    {memberCommittees.length > 1 && (
+                                        <div className={styles.removeAction}>
+                                            <button
+                                                type="button"
+                                                className={styles.removeBtnSmall}
+                                                onClick={() => removeCommitteeField(index)}
+                                                title="削除"
+                                            >
+                                                🗑️
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
-                            <div className={styles.formGroup} style={{ flex: 1 }}>
-                                <label className={styles.label}>役職</label>
-                                <select
-                                    name="role"
-                                    className={styles.select}
-                                    value={formData.role}
-                                    onChange={handleChange}
-                                >
-                                    <option value="">役職なし</option>
-                                    {roles.map(r => (
-                                        <option key={r} value={r}>{r}</option>
-                                    ))}
-                                </select>
-                            </div>
+                        ))}
+                        <div className={styles.addStepAction}>
+                            <button
+                                type="button"
+                                onClick={addCommitteeField}
+                                className={styles.addBtnSmall}
+                            >
+                                ＋ 委員会情報を追加
+                            </button>
                         </div>
                     </div>
 
@@ -257,7 +293,7 @@ export default function MemberEditModal({ member, onClose, onMemberUpdated, comm
                             キャンセル
                         </button>
                         <button type="submit" className={styles.submitBtn} disabled={isLoading}>
-                            {isLoading ? '更新する' : '更新する'}
+                            {isLoading ? '更新中...' : '更新する'}
                         </button>
                     </div>
                 </form>

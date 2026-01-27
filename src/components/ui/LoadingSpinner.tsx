@@ -1,28 +1,18 @@
-import styles from './LoadingSpinner.module.css';
+import styles from './loading.module.css';
 
-interface LoadingSpinnerProps {
-    size?: 'sm' | 'md' | 'lg';
-    fullScreen?: boolean;
-}
-
-export default function LoadingSpinner({ size = 'md', fullScreen = false }: LoadingSpinnerProps) {
-    const spinner = (
-        <div className={`${styles.spinner} ${styles[size]}`}>
-            <div className={styles.circle}></div>
+export default function LoadingSpinner({ size = 'medium', color = 'primary' }: { size?: 'small' | 'medium' | 'large', color?: 'primary' | 'white' }) {
+    return (
+        <div className={`${styles.spinner} ${styles[size]} ${styles[color]}`} role="status">
+            <span className={styles.srOnly}>Loading...</span>
         </div>
     );
+}
 
-    if (fullScreen) {
-        return (
-            <div className={styles.fullScreenOverlay}>
-                {spinner}
-            </div>
-        );
-    }
-
+export function LoadingScreen() {
     return (
-        <div className={styles.container}>
-            {spinner}
+        <div className={styles.screen}>
+            <LoadingSpinner size="large" />
+            <p className={styles.text}>読み込み中...</p>
         </div>
     );
 }

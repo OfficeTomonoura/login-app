@@ -57,76 +57,78 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     // プロフィール情報を取得してAppUserオブジェクトを作成する関数
     const fetchProfileAndSetUser = async (sessionUser: User): Promise<AppUser | null> => {
-        try {
-            // プロフィール取得にタイムアウトを設定（30秒）
-            const profilePromise = supabase
-                .from('profiles')
-                .select('*')
-                .eq('id', sessionUser.id)
-                .single();
+        const MAX_RETRIES = 3;
+        const TIMEOUT_MS = 10000; // 10 seconds per attempt is usually enough for a healthy request
 
-            const timeoutPromise = new Promise<{ data: any; error: any }>((_, reject) =>
-                setTimeout(() => reject(new Error('Profile fetch timeout')), 30000)
-            );
+        for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+            try {
+                // プロフィール取得にタイムアウトを設定
+                const profilePromise = supabase
+                    .from('profiles')
+                    .select('*')
+                    .eq('id', sessionUser.id)
+                    .single();
 
-            const result = await Promise.race([profilePromise, timeoutPromise]) as any;
-            const { data: profile, error } = result;
+                const timeoutPromise = new Promise<{ data: any; error: any }>((_, reject) =>
+                    setTimeout(() => reject(new Error(`Profile fetch timeout (Attempt ${attempt})`)), TIMEOUT_MS)
+                );
 
-            if (error) {
-                if (error.code !== 'PGRST116') {
-                    console.error('Error fetching profile:', error);
+                const result = await Promise.race([profilePromise, timeoutPromise]) as any;
+                const { data: profile, error } = result;
+
+                if (error) {
+                    // PGRST116: No rows found (profile doesn't exist yet) -> This is not a transient error, don't retry.
+                    if (error.code === 'PGRST116') {
+                        console.log('Profile not found, initializing fallback user.');
+                        break; // proceed to fallback
+                    }
+
+                    // If it's another error, throw to trigger retry
+                    throw error;
                 }
 
-                // プロフィールが存在しない場合は新規ユーザーとして扱う
-                console.warn('Profile fetch failed or empty, using fallback user data.', error?.message);
-
-                const newUser: AppUser = {
-                    id: sessionUser.id,
-                    email: sessionUser.email || '',
-                    name: sessionUser.user_metadata?.name || sessionUser.email?.split('@')[0] || 'Unknown',
-                    avatarUrl: '',
-                    isFirstLogin: true,
-                };
-
-                setUser(newUser);
-                return newUser;
+                if (profile) {
+                    const appUser: AppUser = {
+                        id: profile.id,
+                        email: profile.email || sessionUser.email || '',
+                        name: profile.name,
+                        lastName: profile.last_name,
+                        firstName: profile.first_name,
+                        lastNameKana: profile.last_name_kana,
+                        firstNameKana: profile.first_name_kana,
+                        avatarUrl: profile.avatar_url || '',
+                        isFirstLogin: profile.is_first_login,
+                        phone: profile.phone,
+                        address: profile.address,
+                        companyName: profile.company_name,
+                        birthDate: profile.birth_date,
+                        committees: profile.committees,
+                    };
+                    setUser(appUser);
+                    return appUser;
+                }
+            } catch (err: any) {
+                console.warn(`Attempt ${attempt} failed fetching profile:`, err.message || err);
+                if (attempt < MAX_RETRIES) {
+                    // Wait before retrying (exponential backoff: 1s, 2s, 4s...)
+                    await new Promise(res => setTimeout(res, 1000 * attempt));
+                    continue;
+                }
             }
-
-            if (profile) {
-                const appUser: AppUser = {
-                    id: profile.id,
-                    email: profile.email || sessionUser.email || '',
-                    name: profile.name,
-                    lastName: profile.last_name,
-                    firstName: profile.first_name,
-                    lastNameKana: profile.last_name_kana,
-                    firstNameKana: profile.first_name_kana,
-                    avatarUrl: profile.avatar_url || '',
-                    isFirstLogin: profile.is_first_login,
-                    phone: profile.phone,
-                    address: profile.address,
-                    companyName: profile.company_name,
-                    birthDate: profile.birth_date,
-                    committees: profile.committees,
-                };
-
-                setUser(appUser);
-                return appUser;
-            }
-        } catch (err) {
-            console.error('Unexpected error fetching profile:', err);
-            // エラーが発生しても Loading 状態を解除できるよう、最低限のユーザー情報をセット
-            const fallbackUser: AppUser = {
-                id: sessionUser.id,
-                email: sessionUser.email || '',
-                name: sessionUser.email?.split('@')[0] || 'Unknown',
-                avatarUrl: '',
-                isFirstLogin: true,
-            };
-            setUser(fallbackUser);
-            return fallbackUser;
         }
-        return null;
+
+        console.warn('All attempts to fetch profile failed. Using fallback user data.');
+
+        // Final Fallback if all retries failed or profile doesn't exist
+        const fallbackUser: AppUser = {
+            id: sessionUser.id,
+            email: sessionUser.email || '',
+            name: sessionUser.user_metadata?.name || sessionUser.email?.split('@')[0] || 'Unknown',
+            avatarUrl: '',
+            isFirstLogin: true,
+        };
+        setUser(fallbackUser);
+        return fallbackUser;
     };
 
     useEffect(() => {

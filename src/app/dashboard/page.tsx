@@ -94,6 +94,14 @@ export default function DashboardLauncher() {
                     <span className={styles.appName}>マイページ</span>
                 </Link>
 
+                {/* 懇親会どこいった？ */}
+                <Link href="/apps/parties" className={styles.appItem}>
+                    <div className={`${styles.iconWrapper} ${styles.party}`} style={{ background: 'linear-gradient(135deg, #FF9966 0%, #FF5E62 100%)' }}>
+                        🍻
+                    </div>
+                    <span className={styles.appName}>懇親会ログ</span>
+                </Link>
+
                 {/* 以下ダミーアプリ */}
                 <div className={styles.appItem} onClick={() => alert('準備中です')}>
                     <div className={`${styles.iconWrapper} ${styles.calendar}`}>

@@ -236,14 +236,22 @@
 }
 
 /* モバイル対応：幅が狭い場合は縦に並べる */
-@media (max-width: 480px) {
+@media (max-width: 640px) {
     .committeeGrid {
         grid-template-columns: 1fr;
+        gap: 1.25rem;
+    }
+
+    .removeAction {
+        margin-top: 0.5rem;
+        display: flex;
+        justify-content: flex-end;
     }
 
     .removeBtnSmall {
         width: 100%;
-        margin-top: 0.5rem;
+        height: 44px;
+        /* モバイルで押しやすいサイズに */
     }
 }
 

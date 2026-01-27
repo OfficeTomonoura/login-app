@@ -188,8 +188,8 @@ export default function MemberEditModal({ member, onClose, onMemberUpdated, comm
                         <h3 className={styles.sectionTitle}>所属情報</h3>
                         {memberCommittees.map((mc, index) => (
                             <div key={index} className={styles.committeeRow}>
-                                <div className={styles.formRow}>
-                                    <div className={styles.formGroup} style={{ flex: 1 }}>
+                                <div className={styles.committeeGrid}>
+                                    <div className={styles.formGroup}>
                                         <label className={styles.label}>委員会</label>
                                         <select
                                             className={styles.select}
@@ -202,7 +202,7 @@ export default function MemberEditModal({ member, onClose, onMemberUpdated, comm
                                             ))}
                                         </select>
                                     </div>
-                                    <div className={styles.formGroup} style={{ flex: 1 }}>
+                                    <div className={styles.formGroup}>
                                         <label className={styles.label}>役職</label>
                                         <select
                                             className={styles.select}
@@ -215,8 +215,8 @@ export default function MemberEditModal({ member, onClose, onMemberUpdated, comm
                                             ))}
                                         </select>
                                     </div>
-                                    {memberCommittees.length > 1 && (
-                                        <div className={styles.removeAction}>
+                                    <div className={styles.removeAction}>
+                                        {memberCommittees.length > 1 && (
                                             <button
                                                 type="button"
                                                 className={styles.removeBtnSmall}
@@ -225,8 +225,8 @@ export default function MemberEditModal({ member, onClose, onMemberUpdated, comm
                                             >
                                                 🗑️
                                             </button>
-                                        </div>
-                                    )}
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         ))}

@@ -10,60 +10,58 @@ type Props = {
 };
 
 export default function MemberCard({ member, onClick }: Props) {
-    // 現在年度の委員会情報を取得（なければ最新のもの）
+    // 最初の委員会情報を取得
     const currentCommittee = member.committees && member.committees.length > 0
-        ? member.committees[0] // 実際には年度でソートなどを考慮すべきだが、まずは配列の先頭を使用
+        ? member.committees[0]
         : null;
-
-    // 表示名の構築
-    const displayName = member.lastName && member.firstName
-        ? `${member.lastName} ${member.firstName}`
-        : member.name;
-
-    const displayKana = member.lastNameKana && member.firstNameKana
-        ? `${member.lastNameKana} ${member.firstNameKana}`
-        : '';
 
     return (
         <div className={styles.card} onClick={() => onClick && onClick(member)}>
-            <div className={styles.avatarSection}>
-                <Avatar
-                    src={member.avatarUrl || ''}
-                    alt={displayName}
-                    size="lg"
-                    fallback={displayName.charAt(0)}
-                />
-                {member.isProfileLinked && (
-                    <div className={styles.badgeWrapper}>
-                        <JCBadge />
-                    </div>
-                )}
-            </div>
-
-            <div className={styles.nameSection}>
-                <h3 className={styles.name}>{displayName}</h3>
-                {displayKana && <p className={styles.kana}>{displayKana}</p>}
-            </div>
-
-            {currentCommittee && (
-                <>
-                    {currentCommittee.role && (
-                        <div className={styles.roleBadge}>
-                            {currentCommittee.role}
+            <div className={styles.mainContainer}>
+                <div className={styles.avatarSection}>
+                    <Avatar
+                        src={member.avatarUrl || ''}
+                        alt={member.name}
+                        size="lg"
+                        fallback={member.lastName ? member.lastName.charAt(0) : member.name.charAt(0)}
+                    />
+                    {member.isProfileLinked && (
+                        <div className={styles.badgeWrapper}>
+                            <JCBadge />
                         </div>
                     )}
-                    <div className={styles.committee}>
-                        {currentCommittee.name}
-                    </div>
-                </>
-            )}
-
-            {member.companyName && (
-                <div className={styles.company}>
-                    <span>🏢</span>
-                    <span>{member.companyName}</span>
                 </div>
-            )}
+                <div className={styles.nameSection}>
+                    <div className={styles.nameWrapper}>
+                        {member.lastName ? (
+                            <ruby className={styles.rubyName}>
+                                <span className={styles.lastName}>{member.lastName}</span>
+                                <rt className={styles.furigana}>{member.lastNameKana}</rt>
+                            </ruby>
+                        ) : (
+                            <span className={styles.lastName}>{member.name}</span>
+                        )}
+                        <span className={styles.nameSpacer} />
+                        {member.firstName && (
+                            <ruby className={styles.rubyName}>
+                                <span className={styles.firstName}>{member.firstName}</span>
+                                <rt className={styles.furigana}>{member.firstNameKana}</rt>
+                            </ruby>
+                        )}
+                    </div>
+                </div>
+            </div>
+
+            <div className={styles.committeeRow}>
+                {currentCommittee ? (
+                    <div className={styles.committeeInfo}>
+                        <span className={styles.committeeName}>{currentCommittee.name}</span>
+                        <span className={styles.roleName}>{currentCommittee.role}</span>
+                    </div>
+                ) : (
+                    <div className={styles.noCommittee}>所属情報なし</div>
+                )}
+            </div>
         </div>
     );
 }

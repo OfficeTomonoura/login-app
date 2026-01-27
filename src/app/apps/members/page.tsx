@@ -128,9 +128,6 @@ export default function MembersPage() {
 
     return (
         <div className={styles.container}>
-            <Link href="/dashboard" className={styles.backBtn}>
-                ← ダッシュボードに戻る
-            </Link>
 
             <div className={styles.header}>
                 <div>

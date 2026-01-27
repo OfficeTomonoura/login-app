@@ -31,11 +31,15 @@ export default function LoginPage() {
             }
 
             // 初回ログインかどうかで遷移先を分岐
-            // login関数から返されるuserオブジェクトを使用
-            if (user && user.isFirstLogin) {
-                router.push('/auth/onboarding');
+            if (user) {
+                if (user.isFirstLogin) {
+                    router.push('/auth/onboarding');
+                } else {
+                    router.push('/dashboard');
+                }
             } else {
-                router.push('/dashboard');
+                setError('プロフィール情報の取得に失敗しました。通信環境を確認して再度お試しください。');
+                setIsLoading(false);
             }
         } catch (err) {
             console.error('Login error:', err);

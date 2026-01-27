@@ -32,49 +32,49 @@ export default function PostCard({ post, unreadCount, totalUsers }: PostCardProp
     };
 
     return (
-        <Card className={`${styles.cardHover} ${myReaction ? styles.read : styles.unread}`} padding="none">
+        <Card className={`${styles.cardHover} ${myReaction ? styles.read : styles.unread} ${styles[post.type]}`} padding="none">
             <Link href={`/posts/${post.id}`} className={styles.contentLink}>
-                {/* Header Section with Padding */}
-                <div style={{ padding: '1.5rem 1.5rem 0' }}>
-                    <div className={styles.header}>
-                        <div className={styles.meta}>
-                            <Avatar
-                                src={post.authorAvatar}
-                                alt={post.authorName}
-                                size="md"
-                                fallback={post.authorName.charAt(0)}
-                            />
-                            <div className={styles.info}>
-                                <span className={styles.author}>{post.authorName}</span>
-                                <span className={styles.date}>{formatDate(post.createdAt)}</span>
-                            </div>
-                        </div>
-                        <div className={styles.headerRight}>
-                            {user && post.favorites.includes(user.id || '') && (
-                                <span className={styles.favoriteIndicator} title="お気に入り">★</span>
-                            )}
-                            <div className={styles.badges}>
-                                <Badge type={post.type} />
-                                {post.status !== 'open' && <Badge type={post.status} />}
-                            </div>
+                {/* Header Section */}
+                <div className={styles.header}>
+                    <div className={styles.meta}>
+                        <Avatar
+                            src={post.authorAvatar}
+                            alt={post.authorName}
+                            size="md"
+                            fallback={post.authorName.charAt(0)}
+                        />
+                        <div className={styles.info}>
+                            <span className={styles.author}>{post.authorName}</span>
+                            <span className={styles.date}>{formatDate(post.createdAt)}</span>
                         </div>
                     </div>
+                    <div className={styles.headerRight}>
+                        {user && post.favorites.includes(user.id || '') && (
+                            <span className={styles.favoriteIndicator} title="お気に入り">★</span>
+                        )}
+                        <div className={styles.badges}>
+                            <Badge type={post.type} />
+                            {post.status !== 'open' && <Badge type={post.status} />}
+                        </div>
+                    </div>
+                </div>
 
-                    <div className={styles.content}>
-                        <h3 className={styles.title}>{post.title}</h3>
-                        <p className={styles.preview}>{post.content.substring(0, 100)}{post.content.length > 100 ? '...' : ''}</p>
-                    </div>
+                <div className={styles.content}>
+                    <h3 className={styles.title}>{post.title}</h3>
+                    <p className={styles.preview}>{post.content}</p>
                 </div>
 
                 <div className={styles.footer}>
                     <div className={styles.stats}>
-                        <span className={styles.statItem}>
-                            既読 {post.reactions.length} / {totalUsers}
-                        </span>
+                        <div className={styles.statItem}>
+                            <span>既読</span>
+                            <strong>{post.reactions.length} / {totalUsers}</strong>
+                        </div>
                         {unreadCount > 0 && (
-                            <span className={`${styles.statItem} ${styles.warning}`}>
-                                ⏳ 未読 {unreadCount}
-                            </span>
+                            <div className={`${styles.statItem} ${styles.warning}`}>
+                                <span>未読</span>
+                                <strong>{unreadCount}</strong>
+                            </div>
                         )}
                     </div>
 
@@ -86,7 +86,8 @@ export default function PostCard({ post, unreadCount, totalUsers }: PostCardProp
                             </span>
                         ) : (
                             <span className={styles.statusLabelPending}>
-                                未確認
+                                ⚠️ 未確認
+                                <span className={styles.newBadge}>NEW</span>
                             </span>
                         )}
                     </div>

@@ -135,13 +135,13 @@ export default function PartyListPage() {
                     className={`${styles.tab} ${activeTab === 'visited' ? styles.active : ''}`}
                     onClick={() => setActiveTab('visited')}
                 >
-                    行ったお店 <span className={styles.count}>{activeTab === 'visited' ? filteredParties.length : ''}</span>
+                    行った <span className={styles.count}>{activeTab === 'visited' ? filteredParties.length : ''}</span>
                 </button>
                 <button
                     className={`${styles.tab} ${activeTab === 'planned' ? styles.active : ''}`}
                     onClick={() => setActiveTab('planned')}
                 >
-                    計画中のお店 <span className={styles.count}>{activeTab === 'planned' ? filteredParties.length : ''}</span>
+                    計画中 <span className={styles.count}>{activeTab === 'planned' ? filteredParties.length : ''}</span>
                 </button>
                 <button
                     className={`${styles.tab} ${activeTab === 'my_posts' ? styles.active : ''}`}

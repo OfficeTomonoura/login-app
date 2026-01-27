@@ -160,6 +160,9 @@ export default function NewPostPage() {
         <AuthGuard>
             {user && (
                 <div className={styles.container}>
+                    <Link href="/apps/board" className={styles.backButton} title="戻る">
+                        ◀︎
+                    </Link>
                     <h1 className={styles.title}>新規投稿を作成</h1>
 
                     <form onSubmit={handleSubmit} className={styles.form}>
@@ -320,8 +323,8 @@ export default function NewPostPage() {
                         </section>
 
                         <div className={styles.actions}>
-                            <Link href="/apps/board" className={styles.cancelButton} title="キャンセル">
-                                ×
+                            <Link href="/apps/board" className={styles.cancelButton}>
+                                キャンセル
                             </Link>
                             <Button type="submit" variant="primary" loading={loading}>
                                 投稿を公開する

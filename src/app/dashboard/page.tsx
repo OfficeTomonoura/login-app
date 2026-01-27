@@ -123,6 +123,14 @@ export default function DashboardLauncher() {
                     </div>
                     <span className={styles.appName}>ヘルプ</span>
                 </div>
+
+                {/* マスター管理 */}
+                <Link href="/apps/master" className={styles.appItem}>
+                    <div className={`${styles.iconWrapper} ${styles.master}`} style={{ background: 'linear-gradient(135deg, #4b5563 0%, #1f2937 100%)' }}>
+                        ⚙️
+                    </div>
+                    <span className={styles.appName}>マスター管理</span>
+                </Link>
             </div>
         </div>
     );

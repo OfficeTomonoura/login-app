@@ -9,7 +9,6 @@ import MemberCard from './components/MemberCard';
 import MemberFilters from './components/MemberFilters';
 import MemberDetailModal from './components/MemberDetailModal';
 import MemberCreateModal from './components/MemberCreateModal';
-import MasterManagementModal from '@/components/MasterManagement';
 
 export default function MembersPage() {
     const [members, setMembers] = useState<Member[]>([]);
@@ -17,7 +16,6 @@ export default function MembersPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [selectedMember, setSelectedMember] = useState<Member | null>(null);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-    const [isMasterModalOpen, setIsMasterModalOpen] = useState(false);
     const [masterCommittees, setMasterCommittees] = useState<string[]>([]);
     const [masterRoles, setMasterRoles] = useState<string[]>([]);
 
@@ -141,13 +139,6 @@ export default function MembersPage() {
                 </div>
                 <div className="flex gap-2">
                     <button
-                        className={`${styles.addBtn} !bg-gray-600 hover:!bg-gray-700`}
-                        onClick={() => setIsMasterModalOpen(true)}
-                        style={{ marginRight: '10px' }}
-                    >
-                        <span>⚙️</span> マスター管理
-                    </button>
-                    <button
                         className={styles.addBtn}
                         onClick={() => setIsCreateModalOpen(true)}
                     >
@@ -203,15 +194,6 @@ export default function MembersPage() {
                     onMemberCreated={fetchData}
                     committees={masterCommittees}
                     roles={masterRoles}
-                />
-            )}
-
-            {/* マスター管理モーダル */}
-            {isMasterModalOpen && (
-                <MasterManagementModal
-                    onClose={() => setIsMasterModalOpen(false)}
-                    onUpdate={fetchData}
-                    committees={masterCommittees}
                 />
             )}
         </div>

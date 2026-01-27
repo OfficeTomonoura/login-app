@@ -39,7 +39,6 @@ export default function CommitteeManager({ onUpdate }: Props) {
 
     // Load full details for editing
     const fetchCommittees = async () => {
-        // Create a type-safe query if possible, or cast the result
         const { data, error } = await supabase
             .from('master_committees')
             .select(`
@@ -55,12 +54,10 @@ export default function CommitteeManager({ onUpdate }: Props) {
 
         if (error) {
             console.error('Error fetching committees:', error);
-            // alert('委員会の取得に失敗しました: ' + error.message);
             return;
         }
 
         if (data) {
-            // Type assertion for joined data structure
             setFullList(data as any as Committee[]);
         }
     };
@@ -73,7 +70,6 @@ export default function CommitteeManager({ onUpdate }: Props) {
 
         if (data && data.length > 0) {
             setCategories(data);
-            // Default select the first one if nothing selected
             if (!categoryId && data.length > 0) {
                 setCategoryId(data[0].id);
             }
@@ -82,7 +78,6 @@ export default function CommitteeManager({ onUpdate }: Props) {
 
     // Initial load
     useState(() => {
-        // Fetch categories first to set default
         fetchCategories().then(() => {
             fetchCommittees();
         });
@@ -123,7 +118,6 @@ export default function CommitteeManager({ onUpdate }: Props) {
                 if (error) throw error;
             }
 
-            // Reset (keep year and category for convenience)
             setName('');
             setEditingId(null);
             await fetchCommittees();
@@ -153,130 +147,131 @@ export default function CommitteeManager({ onUpdate }: Props) {
     };
 
     return (
-        <div className="space-y-6">
-            <h3>委員会・組織の管理</h3>
-
-            {/* Form */}
-            <form onSubmit={handleSubmit} className={styles.formSection}>
-                <div className={styles.formGrid}>
-                    <div className={styles.inputGroup}>
-                        <label className={styles.label}>年度</label>
-                        <input
-                            type="number"
-                            value={year}
-                            onChange={e => setYear(Number(e.target.value))}
-                            className={styles.input}
-                            required
-                        />
+        <div className="space-y-10">
+            <div>
+                <div className={styles.sectionHeader}>新規登録・編集</div>
+                <form onSubmit={handleSubmit} className={styles.formSection}>
+                    <div className={styles.formGrid}>
+                        <div className={styles.inputGroup}>
+                            <label className={styles.label}>年度</label>
+                            <input
+                                type="number"
+                                value={year}
+                                onChange={e => setYear(Number(e.target.value))}
+                                className={styles.input}
+                                required
+                            />
+                        </div>
+                        <div className={styles.inputGroup}>
+                            <label className={styles.label}>組織名</label>
+                            <input
+                                type="text"
+                                value={name}
+                                onChange={e => setName(e.target.value)}
+                                placeholder="例: 広報委員会"
+                                className={styles.input}
+                                required
+                            />
+                        </div>
+                        <div className={styles.inputGroup}>
+                            <label className={styles.label}>カテゴリ</label>
+                            <select
+                                value={categoryId}
+                                onChange={handleCategoryChange}
+                                className={styles.select}
+                            >
+                                <option value="" disabled>カテゴリーを選択</option>
+                                {categories.map(c => (
+                                    <option key={c.id} value={c.id}>{c.name}</option>
+                                ))}
+                                <option disabled>──────────</option>
+                                <option value="__EDIT_CATEGORY__">カテゴリを編集...</option>
+                            </select>
+                        </div>
                     </div>
-                    <div className={styles.inputGroup}>
-                        <label className={styles.label}>組織名</label>
-                        <input
-                            type="text"
-                            value={name}
-                            onChange={e => setName(e.target.value)}
-                            placeholder="例: 広報委員会"
-                            className={styles.input}
-                            required
-                        />
-                    </div>
-                    <div className={styles.inputGroup}>
-                        <label className={styles.label}>カテゴリ</label>
-                        <select
-                            value={categoryId}
-                            onChange={handleCategoryChange}
-                            className={styles.select}
-                        >
-                            <option value="" disabled>カテゴリーを選択</option>
-                            {categories.map(c => (
-                                <option key={c.id} value={c.id}>{c.name}</option>
-                            ))}
-                            <option disabled>──────────</option>
-                            <option value="__EDIT_CATEGORY__">カテゴリを編集...</option>
-                        </select>
-                    </div>
-                </div>
-                <div className={styles.buttonGroup}>
-                    {editingId && (
-                        <button
-                            type="button"
-                            onClick={() => {
-                                setEditingId(null);
-                                setName('');
-                            }}
-                            className={`${styles.btn} ${styles.btnCancel}`}
-                        >
-                            キャンセル
-                        </button>
-                    )}
-                    <button
-                        type="submit"
-                        disabled={isLoading}
-                        className={`${styles.btn} ${styles.btnSubmit}`}
-                    >
-                        {isLoading ? '保存中...' : (editingId ? '更新する' : '追加する')}
-                    </button>
-                </div>
-            </form>
-
-            {/* List */}
-            <div className={styles.tableContainer}>
-                <table className={styles.table}>
-                    <thead>
-                        <tr>
-                            <th className={styles.th}>年度</th>
-                            <th className={styles.th}>組織名</th>
-                            <th className={styles.th}>カテゴリ</th>
-                            <th className={`${styles.th} text-right`}>操作</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {fullList.map(item => (
-                            <tr key={item.id}>
-                                <td className={styles.td}>{item.year}</td>
-                                <td className={`${styles.td} font-medium`}>{item.name}</td>
-                                <td className={`${styles.td} text-gray-500`}>
-                                    {item.master_categories?.name || '不明'}
-                                </td>
-                                <td className={`${styles.td} ${styles.tdActions}`}>
-                                    <button
-                                        onClick={() => {
-                                            setEditingId(item.id);
-                                            setYear(item.year);
-                                            setName(item.name);
-                                            if (item.category_id) setCategoryId(item.category_id);
-                                        }}
-                                        className={styles.editBtn}
-                                    >
-                                        編集
-                                    </button>
-                                    <button
-                                        onClick={() => handleDelete(item.id)}
-                                        className={styles.deleteBtn}
-                                    >
-                                        削除
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
-                        {fullList.length === 0 && (
-                            <tr>
-                                <td colSpan={4} className={styles.emptyRow}>
-                                    登録されている組織はありません
-                                </td>
-                            </tr>
+                    <div className={styles.buttonGroup}>
+                        {editingId && (
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setEditingId(null);
+                                    setName('');
+                                }}
+                                className={`${styles.btn} ${styles.btnCancel}`}
+                            >
+                                キャンセル
+                            </button>
                         )}
-                    </tbody>
-                </table>
+                        <button
+                            type="submit"
+                            disabled={isLoading}
+                            className={`${styles.btn} ${styles.btnSubmit}`}
+                        >
+                            {isLoading ? '保存中...' : (editingId ? '更新する' : '追加する')}
+                        </button>
+                    </div>
+                </form>
             </div>
 
-            {/* Category Manager Modal */}
+            <div>
+                <div className={styles.sectionHeader}>登録済み一覧</div>
+                <div className={styles.tableContainer}>
+                    <table className={styles.table}>
+                        <thead>
+                            <tr>
+                                <th className={styles.th}>年度</th>
+                                <th className={styles.th}>組織名</th>
+                                <th className={styles.th}>カテゴリ</th>
+                                <th className={`${styles.th} text-right`}>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {fullList.map(item => (
+                                <tr key={item.id}>
+                                    <td className={styles.td}>{item.year}</td>
+                                    <td className={`${styles.td} font-medium`}>{item.name}</td>
+                                    <td className={`${styles.td} text-gray-500`}>
+                                        {item.master_categories?.name || '不明'}
+                                    </td>
+                                    <td className={`${styles.td} ${styles.tdActions}`}>
+                                        <button
+                                            onClick={() => {
+                                                setEditingId(item.id);
+                                                setYear(item.year);
+                                                setName(item.name);
+                                                if (item.category_id) setCategoryId(item.category_id);
+                                            }}
+                                            className={styles.editBtn}
+                                        >
+                                            編集
+                                        </button>
+                                        <button
+                                            onClick={() => handleDelete(item.id)}
+                                            className={styles.deleteBtn}
+                                        >
+                                            削除
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                            {fullList.length === 0 && (
+                                <tr>
+                                    <td colSpan={4} className={styles.emptyRow}>
+                                        登録されている組織はありません
+                                    </td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
             {isCategoryModalOpen && (
                 <CategoryManager
                     onClose={() => setIsCategoryModalOpen(false)}
                     onUpdate={() => {
                         fetchCategories();
-                        fetchCommittees(); // Refresh list names too
+                        fetchCommittees();
                     }}
                 />
             )}

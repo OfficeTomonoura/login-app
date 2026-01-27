@@ -79,8 +79,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 if (error) {
                     // PGRST116: No rows found (profile doesn't exist yet) -> This is not a transient error, don't retry.
                     if (error.code === 'PGRST116') {
-                        console.log('Profile not found, initializing fallback user.');
-                        break; // proceed to fallback
+                        console.log('Profile not found, treating as its first login.');
+                        const newUser: AppUser = {
+                            id: sessionUser.id,
+                            email: sessionUser.email || '',
+                            name: sessionUser.user_metadata?.name || sessionUser.email?.split('@')[0] || 'Unknown',
+                            avatarUrl: '',
+                            isFirstLogin: true,
+                        };
+                        setUser(newUser);
+                        return newUser;
                     }
 
                     // If it's another error, throw to trigger retry
@@ -119,16 +127,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
         console.warn('All attempts to fetch profile failed. Using fallback user data.');
 
-        // Final Fallback if all retries failed or profile doesn't exist
-        const fallbackUser: AppUser = {
-            id: sessionUser.id,
-            email: sessionUser.email || '',
-            name: sessionUser.user_metadata?.name || sessionUser.email?.split('@')[0] || 'Unknown',
-            avatarUrl: '',
-            isFirstLogin: true,
-        };
-        setUser(fallbackUser);
-        return fallbackUser;
+        setUser(null);
+        return null;
     };
 
     useEffect(() => {

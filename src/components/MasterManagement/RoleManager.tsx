@@ -90,97 +90,100 @@ export default function RoleManager({ onUpdate }: Props) {
     };
 
     return (
-        <div className="space-y-6">
-            <h3>役職の管理</h3>
-            <p className="text-sm text-gray-500 mb-4">
-                名簿での表示順序（ソート）や選択肢として使用されます。
-            </p>
+        <div className="space-y-10">
+            <div>
+                <div className={styles.sectionHeader}>新規登録・編集</div>
+                <p className="text-sm text-gray-500 mb-4">
+                    名簿での表示順序（ソート）や選択肢として使用されます。
+                </p>
 
-            {/* Form */}
-            <form onSubmit={handleSubmit} className={styles.formSection}>
-                <div className={`${styles.formGrid} ${styles.formGridTwo}`}>
-                    <div className={styles.inputGroup}>
-                        <label className={styles.label}>表示順 (数値)</label>
-                        <input
-                            type="number"
-                            value={displayOrder}
-                            onChange={e => setDisplayOrder(Number(e.target.value))}
-                            className={styles.input}
-                            required
-                        />
+                <form onSubmit={handleSubmit} className={styles.formSection}>
+                    <div className={`${styles.formGrid} ${styles.formGridTwo}`}>
+                        <div className={styles.inputGroup}>
+                            <label className={styles.label}>表示順 (数値)</label>
+                            <input
+                                type="number"
+                                value={displayOrder}
+                                onChange={e => setDisplayOrder(Number(e.target.value))}
+                                className={styles.input}
+                                required
+                            />
+                        </div>
+                        <div className={styles.inputGroup}>
+                            <label className={styles.label}>役職名</label>
+                            <input
+                                type="text"
+                                value={name}
+                                onChange={e => setName(e.target.value)}
+                                placeholder="例: 副委員長"
+                                className={styles.input}
+                                required
+                            />
+                        </div>
                     </div>
-                    <div className={styles.inputGroup}>
-                        <label className={styles.label}>役職名</label>
-                        <input
-                            type="text"
-                            value={name}
-                            onChange={e => setName(e.target.value)}
-                            placeholder="例: 副委員長"
-                            className={styles.input}
-                            required
-                        />
-                    </div>
-                </div>
-                <div className={styles.buttonGroup}>
-                    {editingId && (
+                    <div className={styles.buttonGroup}>
+                        {editingId && (
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setEditingId(null);
+                                    setName('');
+                                }}
+                                className={`${styles.btn} ${styles.btnCancel}`}
+                            >
+                                キャンセル
+                            </button>
+                        )}
                         <button
-                            type="button"
-                            onClick={() => {
-                                setEditingId(null);
-                                setName('');
-                            }}
-                            className={`${styles.btn} ${styles.btnCancel}`}
+                            type="submit"
+                            disabled={isLoading}
+                            className={`${styles.btn} ${styles.btnSubmit}`}
                         >
-                            キャンセル
+                            {isLoading ? '保存中...' : (editingId ? '更新する' : '追加する')}
                         </button>
-                    )}
-                    <button
-                        type="submit"
-                        disabled={isLoading}
-                        className={`${styles.btn} ${styles.btnSubmit}`}
-                    >
-                        {isLoading ? '保存中...' : (editingId ? '更新する' : '追加する')}
-                    </button>
-                </div>
-            </form>
+                    </div>
+                </form>
+            </div>
 
-            {/* List */}
-            <div className={styles.tableContainer}>
-                <table className={styles.table}>
-                    <thead>
-                        <tr>
-                            <th className={`${styles.th} w-24`}>順序</th>
-                            <th className={styles.th}>役職名</th>
-                            <th className={`${styles.th} text-right`}>操作</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {fullList.map(item => (
-                            <tr key={item.id}>
-                                <td className={`${styles.td} text-gray-500`}>{item.display_order}</td>
-                                <td className={`${styles.td} font-medium`}>{item.name}</td>
-                                <td className={`${styles.td} ${styles.tdActions}`}>
-                                    <button
-                                        onClick={() => {
-                                            setEditingId(item.id);
-                                            setName(item.name);
-                                            setDisplayOrder(item.display_order || 0);
-                                        }}
-                                        className={styles.editBtn}
-                                    >
-                                        編集
-                                    </button>
-                                    <button
-                                        onClick={() => handleDelete(item.id)}
-                                        className={styles.deleteBtn}
-                                    >
-                                        削除
-                                    </button>
-                                </td>
+            <div>
+                <div className={styles.sectionHeader}>登録済み一覧</div>
+                <div className={styles.tableContainer}>
+                    <table className={styles.table}>
+                        <thead>
+                            <tr>
+                                <th className={`${styles.th} w-24`}>順序</th>
+                                <th className={styles.th}>役職名</th>
+                                <th className={`${styles.th} text-right`}>操作</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {fullList.map(item => (
+                                <tr key={item.id}>
+                                    <td className={`${styles.td} text-gray-500`}>{item.display_order}</td>
+                                    <td className={`${styles.td} font-medium`}>{item.name}</td>
+                                    <td className={`${styles.td} ${styles.tdActions}`}>
+                                        <button
+                                            onClick={() => {
+                                                setEditingId(item.id);
+                                                setName(item.name);
+                                                setDisplayOrder(item.display_order || 0);
+                                            }}
+                                            className={styles.editBtn}
+                                        >
+                                            編集
+                                        </button>
+                                        <button
+                                            onClick={() => handleDelete(item.id)}
+                                            className={styles.deleteBtn}
+                                        >
+                                            削除
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     );

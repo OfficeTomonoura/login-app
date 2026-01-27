@@ -99,7 +99,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                     const appUser: AppUser = {
                         id: profile.id,
                         email: profile.email || sessionUser.email || '',
-                        name: profile.name,
+                        name: (profile.last_name || profile.first_name)
+                            ? `${profile.last_name || ''} ${profile.first_name || ''}`.trim()
+                            : profile.name,
                         lastName: profile.last_name,
                         firstName: profile.first_name,
                         lastNameKana: profile.last_name_kana,
@@ -215,7 +217,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
 
         // ローカルのステートも更新
-        setUser((prev) => prev ? { ...prev, ...data } : null);
+        setUser((prev) => {
+            if (!prev) return null;
+            const updated = { ...prev, ...data };
+            // lastName または firstName が存在する場合、name をフルネームで再構築
+            if (updated.lastName || updated.firstName) {
+                updated.name = `${updated.lastName || ''} ${updated.firstName || ''}`.trim();
+            }
+            return updated;
+        });
     };
 
     const updatePassword = async (password: string) => {

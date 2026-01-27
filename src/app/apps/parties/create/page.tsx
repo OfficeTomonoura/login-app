@@ -104,6 +104,22 @@ export default function CreatePartyPage() {
                 console.error(error);
                 alert('保存に失敗しました。もう一度お試しください。');
             } else {
+                // LINE通知送信
+                fetch('/api/send-line', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        title,
+                        content: comment,
+                        authorName: user.name,
+                        source: 'party',
+                        shopName,
+                        date: date,
+                        committeeName: committees.find(c => c.id === committeeId)?.name || '',
+                        status: status
+                    }),
+                }).catch(err => console.error('Notification failed:', err));
+
                 router.push('/apps/parties');
             }
         } catch (err) {

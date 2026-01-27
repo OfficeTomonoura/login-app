@@ -307,7 +307,7 @@ export default function NewPostPage() {
                                                 <div className={styles.linePostTitle}>{formData.title || 'タイトル未入力'}</div>
                                                 <div className={styles.lineMeta}>
                                                     <div className={styles.lineMetaLabel}>投稿者</div>
-                                                    <div className={styles.lineMetaValue}>{user?.name || 'ユーザー'}</div>
+                                                    <div className={styles.lineMetaValue}>{user.name}</div>
                                                 </div>
                                                 <div className={styles.lineContent}>
                                                     {formData.content ? (

@@ -187,7 +187,7 @@ export default function CategoryManager({ onClose, onUpdate, isInline = false }:
         return (
             <div className="space-y-6">
                 <p className="text-sm text-gray-500 mb-4">
-                    組織の区分（委員会、三役など）を管理します。
+                    組織の区分（委員会、正副理事会など）を管理します。
                 </p>
                 {renderContent()}
             </div>

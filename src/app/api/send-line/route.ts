@@ -2,11 +2,14 @@ import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
     try {
-        const { id, title, content, type, authorName } = await request.json();
+        const { id, title, content, type, authorName, source, shopName, date, committeeName, status } = await request.json();
+        const isParty = source === 'party';
 
         const token = process.env.LINE_CHANNEL_ACCESS_TOKEN;
         const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://login-app-beta-seven.vercel.app';
-        const postUrl = id ? `${appUrl}/posts/${id}` : `${appUrl}/apps/board`;
+        const postUrl = isParty
+            ? `${appUrl}/apps/parties`
+            : (id ? `${appUrl}/posts/${id}` : `${appUrl}/apps/board`);
 
         // デバッグログ
         console.log('[LINE API] Attempting to send message (Broadcast)...');
@@ -24,17 +27,21 @@ export async function POST(request: Request) {
         const typeColors: Record<string, string> = {
             report: '#3498db', // 青
             request: '#e74c3c', // 赤
-            notice: '#f39c12'  // オレンジ
+            notice: '#f39c12',  // オレンジ
+            party: '#FF9966'    // 懇親会カラー
         };
-        const typeLabel = type === 'report' ? '報告' : type === 'request' ? '依頼' : 'お知らせ';
-        const color = typeColors[type as string] || '#2ecc71';
+        const typeLabel = isParty ? '懇親会ログ' : (type === 'report' ? '報告' : type === 'request' ? '依頼' : 'お知らせ');
+        const statusLabel = status === 'visited' ? '行った' : status === 'planned' ? '計画中' : '';
+        const color = isParty ? typeColors.party : (typeColors[type as string] || '#2ecc71');
+        const statusBadgeColor = status === 'visited' ? '#2ecc71' : '#3498db';
+        const displayTitle = title;
 
         // メッセージの構築 (Flex Message)
         const message = {
             messages: [
                 {
                     type: 'flex',
-                    altText: `【${typeLabel}】${title}`,
+                    altText: isParty ? `【${statusLabel}】${title}` : `【${typeLabel}】${title}`,
                     contents: {
                         type: 'bubble',
                         header: {
@@ -42,11 +49,36 @@ export async function POST(request: Request) {
                             layout: 'vertical',
                             contents: [
                                 {
-                                    type: 'text',
-                                    text: `新着: ${typeLabel}`,
-                                    weight: 'bold',
-                                    color: '#ffffff',
-                                    size: 'sm'
+                                    type: 'box',
+                                    layout: 'horizontal',
+                                    contents: [
+                                        {
+                                            type: 'text',
+                                            text: `新着: ${typeLabel}`,
+                                            weight: 'bold',
+                                            color: '#ffffff',
+                                            size: 'sm',
+                                            flex: 1
+                                        },
+                                        isParty ? {
+                                            type: 'box',
+                                            layout: 'vertical',
+                                            contents: [
+                                                {
+                                                    type: 'text',
+                                                    text: statusLabel,
+                                                    size: 'xs',
+                                                    color: '#ffffff',
+                                                    align: 'center',
+                                                    weight: 'bold'
+                                                }
+                                            ],
+                                            backgroundColor: statusBadgeColor,
+                                            paddingAll: '4px',
+                                            cornerRadius: '4px',
+                                            flex: 0
+                                        } : { type: 'spacer', size: 'xs' }
+                                    ]
                                 }
                             ],
                             backgroundColor: color
@@ -57,7 +89,7 @@ export async function POST(request: Request) {
                             contents: [
                                 {
                                     type: 'text',
-                                    text: title,
+                                    text: displayTitle,
                                     weight: 'bold',
                                     size: 'xl',
                                     wrap: true
@@ -68,6 +100,72 @@ export async function POST(request: Request) {
                                     margin: 'lg',
                                     spacing: 'sm',
                                     contents: [
+                                        isParty && shopName ? {
+                                            type: 'box',
+                                            layout: 'baseline',
+                                            spacing: 'sm',
+                                            contents: [
+                                                {
+                                                    type: 'text',
+                                                    text: '店名',
+                                                    color: '#aaaaaa',
+                                                    size: 'sm',
+                                                    flex: 2
+                                                },
+                                                {
+                                                    type: 'text',
+                                                    text: shopName,
+                                                    wrap: true,
+                                                    color: '#666666',
+                                                    size: 'sm',
+                                                    flex: 5
+                                                }
+                                            ]
+                                        } : { type: 'spacer', size: 'xs' },
+                                        isParty && date ? {
+                                            type: 'box',
+                                            layout: 'baseline',
+                                            spacing: 'sm',
+                                            contents: [
+                                                {
+                                                    type: 'text',
+                                                    text: '開催日',
+                                                    color: '#aaaaaa',
+                                                    size: 'sm',
+                                                    flex: 2
+                                                },
+                                                {
+                                                    type: 'text',
+                                                    text: date,
+                                                    wrap: true,
+                                                    color: '#666666',
+                                                    size: 'sm',
+                                                    flex: 5
+                                                }
+                                            ]
+                                        } : { type: 'spacer', size: 'xs' },
+                                        isParty && committeeName ? {
+                                            type: 'box',
+                                            layout: 'baseline',
+                                            spacing: 'sm',
+                                            contents: [
+                                                {
+                                                    type: 'text',
+                                                    text: '関連委員会',
+                                                    color: '#aaaaaa',
+                                                    size: 'sm',
+                                                    flex: 2
+                                                },
+                                                {
+                                                    type: 'text',
+                                                    text: committeeName,
+                                                    wrap: true,
+                                                    color: '#666666',
+                                                    size: 'sm',
+                                                    flex: 5
+                                                }
+                                            ]
+                                        } : { type: 'spacer', size: 'xs' },
                                         {
                                             type: 'box',
                                             layout: 'baseline',
@@ -78,7 +176,7 @@ export async function POST(request: Request) {
                                                     text: '投稿者',
                                                     color: '#aaaaaa',
                                                     size: 'sm',
-                                                    flex: 1
+                                                    flex: 2
                                                 },
                                                 {
                                                     type: 'text',
@@ -86,19 +184,11 @@ export async function POST(request: Request) {
                                                     wrap: true,
                                                     color: '#666666',
                                                     size: 'sm',
-                                                    flex: 4
+                                                    flex: 5
                                                 }
                                             ]
                                         }
                                     ]
-                                },
-                                {
-                                    type: 'text',
-                                    text: content.substring(0, 100) + (content.length > 100 ? '...' : ''),
-                                    margin: 'lg',
-                                    size: 'md',
-                                    color: '#333333',
-                                    wrap: true
                                 }
                             ]
                         },
@@ -126,14 +216,32 @@ export async function POST(request: Request) {
             ]
         };
 
-        // LINE APIへの送信 (Broadcast)
-        const response = await fetch('https://api.line.me/v2/bot/message/broadcast', {
+        // 5. LINE APIへの送信 (通常はBroadcast、メンテナンス中は限定送信)
+        const isMaintenance = process.env.NEXT_PUBLIC_MAINTENANCE_MODE === 'true';
+        const recipientsStr = process.env.MAINTENANCE_LOG_RECIPIENTS;
+        const recipients = recipientsStr ? recipientsStr.split(',').map(s => s.trim()).filter(Boolean) : [];
+
+        let apiUrl = 'https://api.line.me/v2/bot/message/broadcast';
+        let body: any = { messages: message.messages };
+
+        if (isMaintenance && recipients.length > 0) {
+            console.log(`[LINE API] Maintenance Mode: Sending to specific recipients (${recipients.length} users)...`);
+            apiUrl = 'https://api.line.me/v2/bot/message/multicast';
+            body = {
+                to: recipients,
+                messages: message.messages
+            };
+        } else {
+            console.log('[LINE API] Standard Mode: Sending Broadcast to all users...');
+        }
+
+        const response = await fetch(apiUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify(message)
+            body: JSON.stringify(body)
         });
 
         if (!response.ok) {

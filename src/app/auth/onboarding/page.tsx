@@ -493,7 +493,7 @@ export default function OnboardingPage() {
                         <div className={styles.sectionHeader} style={{ opacity: 0.6 }}>
                             <h2 className={styles.sectionTitle}>パスワード設定 (調整中)</h2>
                             <p style={{ fontSize: '0.875rem', color: '#aaa', marginTop: '0.25rem' }}>
-                                ※現在この機能はメンテナンス中です。ログイン後の設定画面から変更してください。
+                                ※現在この機能はメンテナンス中です。変更可能になりましたら連絡します。
                             </p>
                         </div>
                         <div style={{ opacity: 0.6, pointerEvents: 'none' }}>

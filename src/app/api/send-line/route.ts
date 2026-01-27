@@ -34,14 +34,19 @@ export async function POST(request: Request) {
         const statusLabel = status === 'visited' ? '行った' : status === 'planned' ? '計画中' : '';
         const color = isParty ? typeColors.party : (typeColors[type as string] || '#2ecc71');
         const statusBadgeColor = status === 'visited' ? '#2ecc71' : '#3498db';
-        const displayTitle = title;
+
+        // 防御策: LINE APIは空文字を許容しないため
+        const safeTitle = (title || '無題').trim() || '無題';
+        const safeAuthorName = (authorName || '不明なユーザー').trim() || '不明なユーザー';
+        const safeShopName = (shopName || '不明な店舗').trim() || '不明な店舗';
+        const displayTitle = safeTitle;
 
         // メッセージの構築 (Flex Message)
         const message = {
             messages: [
                 {
                     type: 'flex',
-                    altText: isParty ? `【${statusLabel}】${title}` : `【${typeLabel}】${title}`,
+                    altText: isParty ? `【${statusLabel}】${safeTitle}` : `【${typeLabel}】${safeTitle}`,
                     contents: {
                         type: 'bubble',
                         header: {
@@ -114,7 +119,7 @@ export async function POST(request: Request) {
                                                 },
                                                 {
                                                     type: 'text',
-                                                    text: shopName,
+                                                    text: safeShopName,
                                                     wrap: true,
                                                     color: '#666666',
                                                     size: 'sm',
@@ -180,7 +185,7 @@ export async function POST(request: Request) {
                                                 },
                                                 {
                                                     type: 'text',
-                                                    text: authorName,
+                                                    text: safeAuthorName,
                                                     wrap: true,
                                                     color: '#666666',
                                                     size: 'sm',

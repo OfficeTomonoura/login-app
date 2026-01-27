@@ -23,8 +23,27 @@ export default function PartyListPage() {
     const [availableCommittees, setAvailableCommittees] = useState<{ id: string; name: string }[]>([]);
 
     const [availableYears, setAvailableYears] = useState<string[]>([]);
+    const [counts, setCounts] = useState({ visited: 0, planned: 0, my_posts: 0 });
 
     useEffect(() => {
+        const fetchAllCounts = async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+
+            const getCount = async (filter?: (q: any) => any) => {
+                let q = supabase.from('parties').select('*', { count: 'exact', head: true });
+                if (filter) q = filter(q);
+                const { count } = await q;
+                return count || 0;
+            };
+
+            const visited = await getCount(q => q.eq('status', 'visited'));
+            const planned = await getCount(q => q.eq('status', 'planned'));
+            const my_posts = user ? await getCount(q => q.eq('created_by', user.id)) : 0;
+
+            setCounts({ visited, planned, my_posts });
+        };
+        fetchAllCounts();
+
         const fetchData = async () => {
             setIsLoading(true);
 
@@ -135,19 +154,19 @@ export default function PartyListPage() {
                     className={`${styles.tab} ${activeTab === 'visited' ? styles.active : ''}`}
                     onClick={() => setActiveTab('visited')}
                 >
-                    行った <span className={styles.count}>{activeTab === 'visited' ? filteredParties.length : ''}</span>
+                    行った<span className={styles.count}>({counts.visited}件)</span>
                 </button>
                 <button
                     className={`${styles.tab} ${activeTab === 'planned' ? styles.active : ''}`}
                     onClick={() => setActiveTab('planned')}
                 >
-                    計画中 <span className={styles.count}>{activeTab === 'planned' ? filteredParties.length : ''}</span>
+                    計画中<span className={styles.count}>({counts.planned}件)</span>
                 </button>
                 <button
                     className={`${styles.tab} ${activeTab === 'my_posts' ? styles.active : ''}`}
                     onClick={() => setActiveTab('my_posts')}
                 >
-                    私の投稿 <span className={styles.count}>{activeTab === 'my_posts' ? filteredParties.length : ''}</span>
+                    私の投稿<span className={styles.count}>({counts.my_posts}件)</span>
                 </button>
             </div>
 

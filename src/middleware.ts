@@ -21,7 +21,10 @@ export async function middleware(request: NextRequest) {
         const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
         if (supabaseUrl && supabaseKey) {
-            // Edge Runtime でも動作する fetch を使用して設定を取得
+            // タイムアウトを設定（影響を最小限にするため2秒）
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 2000);
+
             const res = await fetch(
                 `${supabaseUrl}/rest/v1/system_settings?key=eq.maintenance_mode&select=value`,
                 {
@@ -29,9 +32,11 @@ export async function middleware(request: NextRequest) {
                         'apikey': supabaseKey,
                         'Authorization': `Bearer ${supabaseKey}`
                     },
-                    cache: 'no-store'
+                    cache: 'no-store',
+                    signal: controller.signal
                 }
             );
+            clearTimeout(timeoutId);
 
             if (res.ok) {
                 const data = await res.json();
@@ -41,7 +46,7 @@ export async function middleware(request: NextRequest) {
             }
         }
     } catch (err) {
-        console.error('Middleware: Failed to fetch maintenance status from DB:', err);
+        console.warn('Middleware: Failed to fetch status, using fallback.');
     }
 
     // メンテナンスページ自体へのリクエストを無限ループさせない

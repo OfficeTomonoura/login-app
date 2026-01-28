@@ -13,8 +13,9 @@ export async function middleware(request: NextRequest) {
 
     const hasBypassCookie = request.cookies.get('maintenance_bypass')?.value === 'true';
 
-    // 2. メンテナンスモードのフラグを確認 (DBを優先、フォールバックとして環境変数)
-    let isMaintenanceMode = process.env.NEXT_PUBLIC_MAINTENANCE_MODE === 'true';
+    // 2. メンテナンスモードのフラグを確認 (デフォルトはOFF、安全第一)
+    let isMaintenanceMode = false;
+    const rawMaintEnv = process.env.NEXT_PUBLIC_MAINTENANCE_MODE;
 
     try {
         const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -42,11 +43,18 @@ export async function middleware(request: NextRequest) {
                 const data = await res.json();
                 if (data && data.length > 0) {
                     isMaintenanceMode = data[0].value === true;
+                } else {
+                    // DBにデータがない場合は環境変数を予備として使う
+                    isMaintenanceMode = rawMaintEnv === 'true';
                 }
+            } else {
+                // 通信エラー時は環境変数を予備として使う
+                isMaintenanceMode = rawMaintEnv === 'true';
             }
         }
     } catch (err) {
-        console.warn('Middleware: Failed to fetch status, using fallback.');
+        console.warn('Middleware: Failed to fetch status, using env fallback.');
+        isMaintenanceMode = rawMaintEnv === 'true';
     }
 
     // メンテナンスページ自体へのリクエストを無限ループさせない

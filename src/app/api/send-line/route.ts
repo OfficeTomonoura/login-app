@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { supabase } from '@/lib/supabase';
 
 export async function POST(request: Request) {
     try {
@@ -221,13 +222,37 @@ export async function POST(request: Request) {
             ]
         };
 
-        // 5. LINE APIへの送信 (通常はBroadcast、メンテナンス中は限定送信)
-        const rawMaint = process.env.NEXT_PUBLIC_MAINTENANCE_MODE;
-        const isMaintenance = (rawMaint || '').trim() === 'true';
-        const recipientsStr = process.env.MAINTENANCE_LOG_RECIPIENTS;
-        const recipients = recipientsStr ? recipientsStr.split(',').map(s => s.trim()).filter(Boolean) : [];
+        // 5. システム設定をDBから取得 (メンテナンスモード等の動的切り替え用)
+        let dbMaintenance = null;
+        let dbRecipients = null;
 
-        console.log(`[LINE API] RAW_MAINT: "${rawMaint}", IS_MAINT: ${isMaintenance}, RECIP_COUNT: ${recipients.length}`);
+        try {
+            const { data: settings } = await supabase.from('system_settings').select('key, value');
+            if (settings) {
+                dbMaintenance = settings.find(s => s.key === 'maintenance_mode')?.value;
+                dbRecipients = settings.find(s => s.key === 'line_recipients')?.value;
+            }
+        } catch (err) {
+            console.error('[LINE API] Failed to fetch DB settings:', err);
+        }
+
+        // 5. LINE APIへの送信 (通常はBroadcast、メンテナンス中は限定送信)
+        const rawMaintEnv = process.env.NEXT_PUBLIC_MAINTENANCE_MODE;
+
+        // 判定ロジックを厳格化: DBに設定があればそれを使用し、なければ環境変数を使用
+        const hasDbSetting = (dbMaintenance !== null && dbMaintenance !== undefined);
+        const isMaintenance = hasDbSetting
+            ? dbMaintenance === true
+            : (rawMaintEnv || '').trim() === 'true';
+
+        const envRecipientsStr = process.env.MAINTENANCE_LOG_RECIPIENTS;
+        const envRecipients = envRecipientsStr ? envRecipientsStr.split(',').map(s => s.trim()).filter(Boolean) : [];
+        const recipients = Array.isArray(dbRecipients) ? dbRecipients : envRecipients;
+
+        console.log(`[LINE API] --- SETTINGS DEBUG ---`);
+        console.log(`[LINE API] DB_VAL: ${dbMaintenance}, ENV_VAL: "${rawMaintEnv}"`);
+        console.log(`[LINE API] DECISION: ${isMaintenance ? 'Maintenance' : 'Standard'} (via ${hasDbSetting ? 'DB' : 'Env'})`);
+        console.log(`[LINE API] RECIP_COUNT: ${recipients.length}`);
 
         let apiUrl = 'https://api.line.me/v2/bot/message/broadcast';
         let body: any = { messages: message.messages };
@@ -244,7 +269,7 @@ export async function POST(request: Request) {
                 console.warn('[LINE API] FINAL_TARGET: SKIP (Maintenance ON but no recipients)');
                 return NextResponse.json({
                     success: true,
-                    message: 'メンテナンスモードのため送信をスキップしました（受信者が設定されていません）。'
+                    message: 'メンテナンスモードのため送信をスキップしました。'
                 });
             }
         } else {
